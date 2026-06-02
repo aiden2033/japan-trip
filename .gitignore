@@ -3,6 +3,9 @@ node_modules/
 .pnp/
 .pnp.js
 
+# Keep the lockfile tracked (CI npm ci needs it); overrides a global gitignore rule
+!package-lock.json
+
 # Build output
 dist/
 build/
