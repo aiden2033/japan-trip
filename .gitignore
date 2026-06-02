@@ -37,3 +37,8 @@ pnpm-debug.log*
 
 # Test / coverage
 coverage/
+
+# Compiled TS config artifacts (source of truth is vite.config.ts / tsconfig.*.json)
+vite.config.js
+vite.config.d.ts
+*.tsbuildinfo

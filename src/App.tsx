@@ -57,7 +57,12 @@ function Shell() {
       <BottomTabBar onSearch={openSearch} />
 
       {searchOpen && (
-        <SearchOverlay query={query} onClose={closeSearch} onSelect={handleSelect} />
+        <SearchOverlay
+          query={query}
+          onQueryChange={setQuery}
+          onClose={closeSearch}
+          onSelect={handleSelect}
+        />
       )}
     </div>
   );
