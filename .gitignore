@@ -23,6 +23,9 @@ pnpm-debug.log*
 .env.*
 !.env.example
 
+# Vite
+*.local
+
 # Editor / OS
 .DS_Store
 .idea/
