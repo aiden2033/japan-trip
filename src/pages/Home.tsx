@@ -102,11 +102,24 @@ export default function Home({ onSearch }: HomeProps) {
       </section>
 
       <Collapsible title="Советы по Японии">
-        <ul className="flex list-disc flex-col gap-2 pl-4">
-          {trip.globalTips.map((tip, index) => (
-            <li key={index}>{tip}</li>
+        <div className="flex flex-col gap-4">
+          {trip.globalTips.map((group) => (
+            <div key={group.category} className="flex flex-col gap-1.5">
+              <h3 className="flex items-center gap-1.5 text-sm font-bold text-slate-700">
+                <span aria-hidden="true">{group.icon}</span>
+                {group.category}
+                <span className="rounded-full bg-slate-100 px-1.5 text-xs font-medium text-slate-500">
+                  {group.items.length}
+                </span>
+              </h3>
+              <ul className="flex list-disc flex-col gap-2 pl-4">
+                {group.items.map((item, index) => (
+                  <li key={index}>{item}</li>
+                ))}
+              </ul>
+            </div>
           ))}
-        </ul>
+        </div>
       </Collapsible>
 
       <Collapsible title="Вылет / последняя ночь">

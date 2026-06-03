@@ -44,9 +44,8 @@ export default function Header({ query, onQueryChange, onSearchFocus }: HeaderPr
 
         <nav
           aria-label="Города"
-          className="hidden gap-2 overflow-x-auto md:flex"
+          className="hidden items-center gap-2 overflow-x-auto md:flex"
         >
-          <CityTab to="/" label="Главная" />
           {CITY_TABS.map((city) => (
             <CityTab
               key={city}
@@ -56,6 +55,26 @@ export default function Header({ query, onQueryChange, onSearchFocus }: HeaderPr
               accentText={CITY_ACCENT[city].text}
             />
           ))}
+
+          <NavLink
+            to="/passport"
+            end
+            aria-label="Книжка странника"
+            title="Книжка странника"
+            className="ml-auto shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+          >
+            {({ isActive }) => (
+              <span
+                className={`inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border text-xl transition-colors ${
+                  isActive
+                    ? 'border-rose-300 bg-rose-100'
+                    : 'border-slate-200 bg-white hover:bg-slate-100'
+                }`}
+              >
+                📕
+              </span>
+            )}
+          </NavLink>
         </nav>
       </div>
     </header>

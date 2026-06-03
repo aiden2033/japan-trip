@@ -65,6 +65,11 @@ export default function PlaceDetail() {
         </div>
         <h1 className="text-2xl font-extrabold leading-tight text-slate-900">
           {place.nameRu}
+          {place.nameJa && (
+            <span className="ml-2 align-middle text-base font-medium text-slate-400">
+              {place.nameJa}
+            </span>
+          )}
         </h1>
         <p className="text-sm text-slate-500">{place.nameEn}</p>
       </div>
@@ -83,6 +88,23 @@ export default function PlaceDetail() {
           <span className="font-medium">🕒 Лучшее время: {place.bestTime}</span>
         )}
       </div>
+
+      {(place.hours || place.transport) && (
+        <div className="flex flex-col gap-1.5 text-sm text-slate-700">
+          {place.hours && (
+            <p>
+              <span className="font-medium">🕒 Часы: </span>
+              {place.hours}
+            </p>
+          )}
+          {place.transport && (
+            <p>
+              <span className="font-medium">🚃 Как добраться: </span>
+              {place.transport}
+            </p>
+          )}
+        </div>
+      )}
 
       <p className="text-sm leading-relaxed text-slate-700">{place.description}</p>
 

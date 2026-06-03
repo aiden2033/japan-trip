@@ -3,8 +3,10 @@ import { useEffect, useMemo, useState } from 'react';
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import type { CityId, Place } from '../data/types';
+import type { LatLng } from '../lib/geo';
+import { haversineKm } from '../lib/geo';
 import { formatHours } from '../lib/tags';
-import { CITY_CENTER, placeIcon } from '../lib/mapIcons';
+import { CITY_CENTER, placeIcon, userIcon } from '../lib/mapIcons';
 import { placeKey, useVisited } from '../lib/useStoredSet';
 import PlaceImage from './PlaceImage';
 import PlaceToggles from './PlaceToggles';
@@ -15,30 +17,33 @@ interface CityMapProps {
   cityPlaces: Place[];
   dayTripPlaces: Place[];
   onOpen: (slug: string) => void;
+  userPosition?: LatLng | null;
 }
 
-function FitBounds({ points }: { points: Place[] }) {
+const USER_BOUNDS_RADIUS_KM = 50;
+
+function FitBounds({ points, userPoint }: { points: Place[]; userPoint: LatLng | null }) {
   const map = useMap();
   const key = points
     .filter((p) => p.coords)
     .map((p) => placeKey(p))
     .sort()
     .join(',');
+  const userKey = userPoint ? `${userPoint.lat.toFixed(3)},${userPoint.lng.toFixed(3)}` : '';
 
   useEffect(() => {
-    const withCoords = points.filter((p) => p.coords);
-    if (withCoords.length === 0) return;
-    if (withCoords.length === 1) {
-      const { lat, lng } = withCoords[0].coords!;
-      map.setView([lat, lng], 14);
+    const coords: [number, number][] = points
+      .filter((p) => p.coords)
+      .map((p) => [p.coords!.lat, p.coords!.lng]);
+    if (userPoint) coords.push([userPoint.lat, userPoint.lng]);
+    if (coords.length === 0) return;
+    if (coords.length === 1) {
+      map.setView(coords[0], 14);
       return;
     }
-    const bounds = L.latLngBounds(
-      withCoords.map((p) => [p.coords!.lat, p.coords!.lng] as [number, number]),
-    );
-    map.fitBounds(bounds, { padding: [48, 48], maxZoom: 14 });
+    map.fitBounds(L.latLngBounds(coords), { padding: [48, 48], maxZoom: 14 });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key, map]);
+  }, [key, userKey, map]);
 
   return null;
 }
@@ -83,7 +88,7 @@ function TilesPlaceholder() {
   );
 }
 
-export default function CityMap({ city, cityPlaces, dayTripPlaces, onOpen }: CityMapProps) {
+export default function CityMap({ city, cityPlaces, dayTripPlaces, onOpen, userPosition }: CityMapProps) {
   const [tilesFailed, setTilesFailed] = useState(false);
   const visited = useVisited();
 
@@ -93,6 +98,12 @@ export default function CityMap({ city, cityPlaces, dayTripPlaces, onOpen }: Cit
     () => [...cityPts, ...dayTripPts],
     [cityPts, dayTripPts],
   );
+
+  const nearUser = useMemo(() => {
+    if (!userPosition) return null;
+    const [lat, lng] = CITY_CENTER[city];
+    return haversineKm(userPosition, { lat, lng }) <= USER_BOUNDS_RADIUS_KM ? userPosition : null;
+  }, [userPosition, city]);
 
   if (visiblePoints.length === 0) {
     return (
@@ -119,7 +130,19 @@ export default function CityMap({ city, cityPlaces, dayTripPlaces, onOpen }: Cit
             tileload: () => setTilesFailed(false),
           }}
         />
-        <FitBounds points={visiblePoints} />
+        <FitBounds points={visiblePoints} userPoint={nearUser} />
+        {nearUser && (
+          <Marker
+            position={[nearUser.lat, nearUser.lng]}
+            icon={userIcon()}
+            zIndexOffset={1000}
+            keyboard={false}
+          >
+            <Popup>
+              <span className="text-xs font-semibold text-slate-700">📍 Вы здесь</span>
+            </Popup>
+          </Marker>
+        )}
         {visiblePoints.map((p) => (
           <Marker
             key={placeKey(p)}

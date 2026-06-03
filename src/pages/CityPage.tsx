@@ -1,14 +1,18 @@
-import { lazy, Suspense, useMemo, useState } from 'react';
+import { lazy, Suspense, useCallback, useMemo, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import type { CityId, Place, Tag } from '../data/types';
 import { cities } from '../data/cities';
 import { places } from '../data/places';
 import { dayTripGroups } from '../data/trip';
+import { animeRoutesByCity } from '../data/animeRoutes';
 import { CITY_ACCENT } from '../lib/tags';
+import { haversineKm } from '../lib/geo';
+import { useGeolocation } from '../lib/useGeolocation';
 import { placeKey, useVisited } from '../lib/useStoredSet';
 import Collapsible from '../components/Collapsible';
 import PlaceCard from '../components/PlaceCard';
 import TagChip from '../components/TagChip';
+import AnimeRoutes from '../components/AnimeRoutes';
 
 const CityMap = lazy(() => import('../components/CityMap'));
 
@@ -21,9 +25,12 @@ export default function CityPage() {
   const { city } = useParams();
   const navigate = useNavigate();
   const [activeTags, setActiveTags] = useState<Tag[]>([]);
-  const [view, setView] = useState<'list' | 'map'>('list');
+  const [view, setView] = useState<'list' | 'map' | 'anime'>('list');
+  const [sortByDistance, setSortByDistance] = useState(false);
   const visited = useVisited();
   const visitedItems = visited.items;
+  const geo = useGeolocation();
+  const position = geo.position;
 
   const cityMeta = useMemo(
     () => (isCityId(city) ? cities.find((c) => c.id === city) : undefined),
@@ -40,14 +47,22 @@ export default function CityPage() {
     [cityPlaces, activeTags],
   );
 
+  const distanceFor = useCallback(
+    (place: Place): number | undefined =>
+      position && place.coords ? haversineKm(position, place.coords) : undefined,
+    [position],
+  );
+
+  const activeSort = sortByDistance && Boolean(position);
+
   const mainPlaces = useMemo(
-    () => visitedLast(regularPlaces.filter((p) => !p.foodSpot), visitedItems),
-    [regularPlaces, visitedItems],
+    () => orderPlaces(regularPlaces.filter((p) => !p.foodSpot), visitedItems, activeSort, distanceFor),
+    [regularPlaces, visitedItems, activeSort, distanceFor],
   );
 
   const cafePlaces = useMemo(
-    () => visitedLast(regularPlaces.filter((p) => p.foodSpot), visitedItems),
-    [regularPlaces, visitedItems],
+    () => orderPlaces(regularPlaces.filter((p) => p.foodSpot), visitedItems, activeSort, distanceFor),
+    [regularPlaces, visitedItems, activeSort, distanceFor],
   );
 
   const dayTripPlaces = useMemo(
@@ -61,6 +76,11 @@ export default function CityPage() {
   );
 
   const mapCityPlaces = useMemo(() => [...mainPlaces, ...cafePlaces], [mainPlaces, cafePlaces]);
+
+  const animeRoutes = useMemo(
+    () => (isCityId(city) ? animeRoutesByCity[city] : []),
+    [city],
+  );
 
   if (!cityMeta) {
     return <Navigate to="/" replace />;
@@ -140,23 +160,49 @@ export default function CityPage() {
         </section>
       )}
 
-      <section className="flex items-center gap-1 self-start rounded-full bg-slate-100 p-1">
-        {(['list', 'map'] as const).map((v) => (
+      <div className="flex flex-wrap items-center gap-2">
+        <section className="flex items-center gap-1 self-start rounded-full bg-slate-100 p-1">
+          {(['list', 'map', ...(animeRoutes.length > 0 ? ['anime' as const] : [])] as const).map(
+            (v) => (
+              <button
+                key={v}
+                type="button"
+                onClick={() => setView(v)}
+                aria-pressed={view === v}
+                className={`inline-flex min-h-[44px] items-center rounded-full px-4 text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 ${
+                  view === v ? 'bg-white text-slate-900 shadow' : 'text-slate-500 hover:text-slate-800'
+                }`}
+              >
+                {v === 'list' ? '☰ Список' : v === 'map' ? '🗺 Карта' : '🎬 Аниме'}
+              </button>
+            ),
+          )}
+        </section>
+
+        {view === 'list' && position && (
           <button
-            key={v}
             type="button"
-            onClick={() => setView(v)}
-            aria-pressed={view === v}
-            className={`inline-flex min-h-[44px] items-center rounded-full px-4 text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 ${
-              view === v ? 'bg-white text-slate-900 shadow' : 'text-slate-500 hover:text-slate-800'
+            onClick={() => setSortByDistance((prev) => !prev)}
+            aria-pressed={sortByDistance}
+            className={`inline-flex min-h-[44px] items-center rounded-full px-4 text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 ${
+              sortByDistance
+                ? 'bg-sky-600 text-white shadow'
+                : 'bg-slate-100 text-slate-500 hover:text-slate-800'
             }`}
           >
-            {v === 'list' ? '☰ Список' : '🗺 Карта'}
+            📍 Рядом со мной
           </button>
-        ))}
-      </section>
+        )}
+      </div>
 
-      {view === 'map' ? (
+      {view === 'anime' ? (
+        <AnimeRoutes
+          city={cityMeta.id}
+          routes={animeRoutes}
+          cityPlaces={cityPlaces}
+          onOpen={openPlace}
+        />
+      ) : view === 'map' ? (
         <Suspense
           fallback={<div className="h-[60vh] animate-pulse rounded-2xl bg-slate-100" />}
         >
@@ -165,6 +211,7 @@ export default function CityPage() {
             cityPlaces={mapCityPlaces}
             dayTripPlaces={dayTripPlaces}
             onOpen={openPlace}
+            userPosition={position}
           />
         </Suspense>
       ) : (
@@ -176,6 +223,7 @@ export default function CityPage() {
             place={place}
             places={places}
             onOpen={openPlace}
+            distanceKm={activeSort ? distanceFor(place) : undefined}
           />
         ))}
       </section>
@@ -190,6 +238,7 @@ export default function CityPage() {
                 place={place}
                 places={places}
                 onOpen={openPlace}
+                distanceKm={activeSort ? distanceFor(place) : undefined}
               />
             ))}
           </div>
@@ -203,7 +252,12 @@ export default function CityPage() {
       )}
 
       {groupsForCity.map((group) => {
-        const groupPlaces = visitedLast(dayTripPlaces.filter((p) => p.dayTripGroup === group.id), visitedItems);
+        const groupPlaces = orderPlaces(
+          dayTripPlaces.filter((p) => p.dayTripGroup === group.id),
+          visitedItems,
+          activeSort,
+          distanceFor,
+        );
         if (groupPlaces.length === 0) return null;
         return (
           <section
@@ -224,6 +278,7 @@ export default function CityPage() {
                   place={place}
                   places={places}
                   onOpen={openPlace}
+                  distanceKm={activeSort ? distanceFor(place) : undefined}
                 />
               ))}
             </div>
@@ -243,6 +298,19 @@ const visitedLast = (list: Place[], visitedItems: Set<string>): Place[] => [
   ...list.filter((p) => !visitedItems.has(placeKey(p))),
   ...list.filter((p) => visitedItems.has(placeKey(p))),
 ];
+
+const orderPlaces = (
+  list: Place[],
+  visitedItems: Set<string>,
+  byDistance: boolean,
+  distanceFor: (place: Place) => number | undefined,
+): Place[] => {
+  if (!byDistance) return visitedLast(list, visitedItems);
+  const withDistance = [...list].sort(
+    (a, b) => (distanceFor(a) ?? Infinity) - (distanceFor(b) ?? Infinity),
+  );
+  return visitedLast(withDistance, visitedItems);
+};
 
 const uniqueTags = (list: Place[]): Tag[] => {
   const set = new Set<Tag>();

@@ -6,6 +6,7 @@ const fuse = new Fuse(places, {
   keys: [
     { name: 'nameRu', weight: 3 },
     { name: 'nameEn', weight: 3 },
+    { name: 'nameJa', weight: 2 },
     { name: 'tags', weight: 1 },
     { name: 'city', weight: 1 },
     { name: 'description', weight: 1 },

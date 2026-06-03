@@ -11,7 +11,6 @@ interface TabDef {
 }
 
 const TABS: TabDef[] = [
-  { to: '/', label: 'Главная', icon: '🏠' },
   { to: '/osaka', label: 'Осака', icon: '🏯' },
   { to: '/kyoto', label: 'Киото', icon: '⛩️' },
   { to: '/tokyo', label: 'Токио', icon: '🌆' },
@@ -45,6 +44,24 @@ export default function BottomTabBar({ onSearch }: BottomTabBarProps) {
             </NavLink>
           </li>
         ))}
+        <li className="flex-1 border-l border-slate-200">
+          <NavLink
+            to="/passport"
+            end
+            aria-label="Книжка странника"
+            title="Книжка странника"
+            className="flex min-h-[44px] flex-col items-center justify-center py-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-slate-400"
+          >
+            {({ isActive }) => (
+              <span
+                aria-hidden="true"
+                className={`text-2xl leading-none transition-transform ${isActive ? 'scale-110' : ''}`}
+              >
+                📕
+              </span>
+            )}
+          </NavLink>
+        </li>
         <li className="flex-1">
           <button
             type="button"

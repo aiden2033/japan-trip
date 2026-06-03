@@ -1,4 +1,4 @@
-import type { Tag, CityId } from '../data/types';
+import type { Tag, CityId, Place } from '../data/types';
 
 export const TAG_LABELS: Record<Tag, string> = {
   morning: '🌅 утро',
@@ -36,3 +36,8 @@ export const mapsUrl = (query: string): string =>
 
 export const formatHours = ([min, max]: [number, number]): string =>
   min === max ? `~${min} ч` : `${min}–${max} ч`;
+
+export const stampGlyph = (place: Pick<Place, 'nameJa' | 'nameRu'>): string =>
+  place.nameJa && place.nameJa.trim()
+    ? place.nameJa.trim()
+    : Array.from(place.nameRu)[0] ?? '⛩';

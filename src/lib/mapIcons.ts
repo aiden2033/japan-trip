@@ -30,3 +30,12 @@ export const placeIcon = (
     popupAnchor: [0, -size],
   });
 };
+
+export const userIcon = (): L.DivIcon =>
+  L.divIcon({
+    className: 'user-dot-wrapper',
+    html: '<span class="user-dot"></span>',
+    iconSize: [18, 18],
+    iconAnchor: [9, 9],
+    popupAnchor: [0, -10],
+  });

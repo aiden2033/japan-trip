@@ -15,7 +15,7 @@ export const places: Place[] = [
     mapsQuery: 'Dotonbori, Osaka, Japan',
     coords: { lat: 34.6687, lng: 135.5013 },
     photo: 'photos/osaka/dotonbori.webp',
-    note: '道頓堀',
+    nameJa: '道頓堀',
   },
   {
     slug: 'osaka-castle',
@@ -30,7 +30,7 @@ export const places: Place[] = [
     mapsQuery: 'Osaka Castle, Osaka, Japan',
     coords: { lat: 34.6873, lng: 135.5259 },
     photo: 'photos/osaka/osaka_castle.jpg',
-    note: '大阪城',
+    nameJa: '大阪城',
   },
   {
     slug: 'umeda-sky-building',
@@ -44,7 +44,7 @@ export const places: Place[] = [
     mapsQuery: 'Umeda Sky Building, Osaka, Japan',
     coords: { lat: 34.7053, lng: 135.4903 },
     photo: 'photos/osaka/umeda_sky_building.avif',
-    note: 'Работает до 15:00 (уточнить часы).',
+    hours: 'Работает до 15:00 (уточнить часы).',
   },
   {
     slug: 'shinsekai',
@@ -58,7 +58,7 @@ export const places: Place[] = [
     mapsQuery: 'Shinsekai, Osaka, Japan',
     coords: { lat: 34.6524, lng: 135.5063 },
     photo: 'photos/osaka/shinsekai.jpg',
-    note: '新世界',
+    nameJa: '新世界',
   },
   {
     slug: 'tsutenkaku-tower',
@@ -72,7 +72,7 @@ export const places: Place[] = [
     mapsQuery: 'Tsutenkaku Tower, Osaka, Japan',
     coords: { lat: 34.6525, lng: 135.5063 },
     photo: 'photos/osaka/tsutenkaku.jpeg',
-    note: '通天閣',
+    nameJa: '通天閣',
   },
   {
     slug: 'hep-five-ferris-wheel',
@@ -99,7 +99,7 @@ export const places: Place[] = [
     mapsQuery: 'Namba Yasaka Jinja, Osaka, Japan',
     coords: { lat: 34.6618, lng: 135.4969 },
     photo: 'photos/osaka/namba_yasaka_jinja.jpg',
-    note: '難波八阪神社',
+    nameJa: '難波八阪神社',
   },
   {
     slug: 'amerikamura',
@@ -113,7 +113,7 @@ export const places: Place[] = [
     mapsQuery: 'Amerikamura, Osaka, Japan',
     coords: { lat: 34.6722, lng: 135.4977 },
     photo: 'photos/osaka/amerikamura.webp',
-    note: 'アメリカ村',
+    nameJa: 'アメリカ村',
   },
   {
     slug: 'den-den-town',
@@ -128,7 +128,9 @@ export const places: Place[] = [
     coords: { lat: 34.658, lng: 135.5057 },
     photo: 'photos/osaka/den-den-town.webp',
     anime: ['Стейнз гейт (Steins;Gate)', 'Лав Лайв! (Love Live! School Idol Project)'],
-    note: '日本橋・でんでんタウン. Многие магазины открываются ближе к полудню. Аниме — тематические для отаку-квартала «электрик-тауна» (как у Акихабары), не конкретная локация-прообраз.',
+    nameJa: '日本橋・でんでんタウン',
+    hours: 'Многие магазины открываются ближе к полудню.',
+    note: 'Аниме — тематические для отаку-квартала «электрик-тауна» (как у Акихабары), не конкретная локация-прообраз.',
   },
   {
     slug: 'shitenno-ji',
@@ -142,7 +144,7 @@ export const places: Place[] = [
     mapsQuery: 'Shitenno-ji, Osaka, Japan',
     coords: { lat: 34.6543, lng: 135.5165 },
     photo: 'photos/osaka/shittenoji.jpg',
-    note: '四天王寺',
+    nameJa: '四天王寺',
   },
   {
     slug: 'nakanoshima',
@@ -156,7 +158,7 @@ export const places: Place[] = [
     mapsQuery: 'Nakanoshima, Osaka, Japan',
     coords: { lat: 34.6929, lng: 135.506 },
     photo: 'photos/osaka/nakanoshima.jpg',
-    note: '中之島',
+    nameJa: '中之島',
   },
   {
     slug: 'nara',
@@ -173,7 +175,8 @@ export const places: Place[] = [
     isDayTrip: true,
     dayTripGroup: 'osaka-daytrip',
     incompatibleWith: ['himeji-castle'],
-    note: '奈良. ~45 мин от Осаки на Kintetsu (Osaka-Namba -> Kintetsu-Nara). Билеты ¥800-1600 (через приложение или Suica/ICOCA). Удобный маршрут от вокзала: Кофуку-дзи → Нара-парк → Тодай-дзи (великий Будда) → Нигацу-до (вид на Нару) → Касуга-тайся → Исуй-эн → Нарамати → музей Нары → обратно.',
+    nameJa: '奈良',
+    transport: '~45 мин от Осаки на Kintetsu (Osaka-Namba -> Kintetsu-Nara). Билеты ¥800-1600 (через приложение или Suica/ICOCA). Удобный маршрут от вокзала: Кофуку-дзи → Нара-парк → Тодай-дзи (великий Будда) → Нигацу-до (вид на Нару) → Касуга-тайся → Исуй-эн → Нарамати → музей Нары → обратно.',
   },
   {
     slug: 'himeji-castle',
@@ -191,7 +194,8 @@ export const places: Place[] = [
     isDayTrip: true,
     dayTripGroup: 'osaka-daytrip',
     incompatibleWith: ['nara'],
-    note: '姫路城. Часто совмещают с Kobe на обратном пути (вагю/набережная).',
+    nameJa: '姫路城',
+    note: 'Часто совмещают с Kobe на обратном пути (вагю/набережная).',
   },
 
   // Kyoto
@@ -210,7 +214,7 @@ export const places: Place[] = [
     photo: 'photos/kyoto/fushimi_inari.jpg',
     combinesWith: ['tofuku-ji'],
     anime: ['Инари, конкон, любовь моя (Inari, Konkon, Koi Iroha)'],
-    note: '伏見稲荷大社',
+    nameJa: '伏見稲荷大社',
   },
   {
     slug: 'arashiyama',
@@ -226,7 +230,7 @@ export const places: Place[] = [
     coords: { lat: 35.0094, lng: 135.6669 },
     photo: 'photos/kyoto/arashiyama.jpeg',
     anime: ['Магическая битва (Jujutsu Kaisen)', 'Бродяга Кэнсин (Rurouni Kenshin)'],
-    note: '嵐山',
+    nameJa: '嵐山',
   },
   {
     slug: 'kiyomizu-dera',
@@ -241,7 +245,7 @@ export const places: Place[] = [
     coords: { lat: 34.9949, lng: 135.7851 },
     photo: 'photos/kyoto/Kiyomizu-dera.webp',
     anime: ['Детектив Конан (Detective Conan / Meitantei Conan)', 'Бродяга Кэнсин (Rurouni Kenshin)'],
-    note: '清水寺',
+    nameJa: '清水寺',
   },
   {
     slug: 'yasaka-pagoda',
@@ -255,7 +259,7 @@ export const places: Place[] = [
     mapsQuery: 'Hokan-ji Temple Yasaka Pagoda, Kyoto, Japan',
     coords: { lat: 34.9985, lng: 135.7806 },
     photo: 'photos/kyoto/yasaka_pagoda.jpeg',
-    note: '法観寺 / 八坂の塔 (Hōkan-ji, Yasaka Pagoda)',
+    nameJa: '法観寺 / 八坂の塔',
   },
   {
     slug: 'gion',
@@ -269,7 +273,7 @@ export const places: Place[] = [
     mapsQuery: 'Gion, Kyoto, Japan',
     coords: { lat: 35.0036, lng: 135.7752 },
     photo: 'photos/kyoto/gion.jpg',
-    note: '祇園',
+    nameJa: '祇園',
   },
   {
     slug: 'sannenzaka-ninenzaka',
@@ -284,7 +288,7 @@ export const places: Place[] = [
     mapsQuery: 'Sannenzaka, Kyoto, Japan',
     coords: { lat: 34.9968, lng: 135.781 },
     photo: 'photos/kyoto/sannenzaka.jpeg',
-    note: '三年坂・二年坂',
+    nameJa: '三年坂・二年坂',
   },
   {
     slug: 'pontocho',
@@ -298,7 +302,7 @@ export const places: Place[] = [
     mapsQuery: 'Pontocho, Kyoto, Japan',
     coords: { lat: 35.005, lng: 135.7706 },
     photo: 'photos/kyoto/pontochyo.jpg',
-    note: '先斗町',
+    nameJa: '先斗町',
   },
   {
     slug: 'ginkaku-ji',
@@ -312,7 +316,7 @@ export const places: Place[] = [
     mapsQuery: 'Ginkaku-ji, Kyoto, Japan',
     coords: { lat: 35.027, lng: 135.7982 },
     photo: 'photos/kyoto/gingaki_ji.jpeg',
-    note: '銀閣寺',
+    nameJa: '銀閣寺',
   },
   {
     slug: 'nishiki-market',
@@ -326,7 +330,7 @@ export const places: Place[] = [
     mapsQuery: 'Nishiki Market, Kyoto, Japan',
     coords: { lat: 35.005, lng: 135.7649 },
     photo: 'photos/kyoto/nishiki_market.webp',
-    note: '錦市場',
+    nameJa: '錦市場',
   },
   {
     slug: 'yasaka-shrine',
@@ -340,7 +344,7 @@ export const places: Place[] = [
     mapsQuery: 'Yasaka Shrine, Kyoto, Japan',
     coords: { lat: 35.0036, lng: 135.7785 },
     photo: 'photos/kyoto/yasaka_shrine.jpg',
-    note: '八坂神社',
+    nameJa: '八坂神社',
   },
   {
     slug: 'philosophers-path',
@@ -354,7 +358,7 @@ export const places: Place[] = [
     mapsQuery: "Philosopher's Path, Kyoto, Japan",
     coords: { lat: 35.0257, lng: 135.7948 },
     photo: 'photos/kyoto/pholosphers_path.jpeg',
-    note: '哲学の道',
+    nameJa: '哲学の道',
   },
   {
     slug: 'tofuku-ji',
@@ -369,7 +373,7 @@ export const places: Place[] = [
     coords: { lat: 34.9766, lng: 135.7741 },
     photo: 'photos/kyoto/tofukuji.webp',
     combinesWith: ['fushimi-inari'],
-    note: '東福寺',
+    nameJa: '東福寺',
   },
   {
     slug: 'kamo-river',
@@ -384,7 +388,7 @@ export const places: Place[] = [
     mapsQuery: 'Kamo River, Kyoto, Japan',
     coords: { lat: 35.0116, lng: 135.772 },
     photo: 'photos/kyoto/kamo_river.webp',
-    note: '鴨川',
+    nameJa: '鴨川',
   },
   {
     slug: 'kodai-ji',
@@ -398,7 +402,7 @@ export const places: Place[] = [
     mapsQuery: 'Kodai-ji, Kyoto, Japan',
     coords: { lat: 34.9999, lng: 135.7807 },
     photo: 'photos/kyoto/kodai_ji.jpg',
-    note: '高台寺',
+    nameJa: '高台寺',
   },
   {
     slug: 'imperial-palace',
@@ -412,7 +416,7 @@ export const places: Place[] = [
     mapsQuery: 'Imperial Palace, Kyoto, Japan',
     coords: { lat: 35.0254, lng: 135.7621 },
     photo: 'photos/kyoto/imperial_palace.jpg',
-    note: '京都御所',
+    nameJa: '京都御所',
   },
   {
     slug: 'manga-museum',
@@ -426,7 +430,7 @@ export const places: Place[] = [
     mapsQuery: 'Manga Museum, Kyoto, Japan',
     coords: { lat: 35.0108, lng: 135.76 },
     photo: 'photos/kyoto/manga_museum.jpeg',
-    note: '京都国際マンガミュージアム',
+    nameJa: '京都国際マンガミュージアム',
   },
   {
     slug: 'hario-cafe',
@@ -457,7 +461,8 @@ export const places: Place[] = [
     isDayTrip: true,
     dayTripGroup: 'kyoto-daytrip',
     anime: ['Звуки! Эуфониум (Hibike! Euphonium / Sound! Euphonium)'],
-    note: '宇治. Опциональный полудневный выезд.',
+    nameJa: '宇治',
+    note: 'Опциональный полудневный выезд.',
   },
 
   // Tokyo
@@ -474,7 +479,7 @@ export const places: Place[] = [
     coords: { lat: 35.6595, lng: 139.7004 },
     photo: 'photos/tokyo/shibuya_cross.jpg',
     anime: ['Магическая битва (Jujutsu Kaisen)', 'Дитя погоды (Tenki no Ko / Weathering With You)', 'Токийский гуль (Tokyo Ghoul)'],
-    note: '渋谷スクランブル交差点',
+    nameJa: '渋谷スクランブル交差点',
   },
   {
     slug: 'shibuya-sky',
@@ -488,7 +493,8 @@ export const places: Place[] = [
     mapsQuery: 'Shibuya Sky, Tokyo, Japan',
     coords: { lat: 35.658, lng: 139.7016 },
     photo: 'photos/tokyo/shibuya_sky.jpg',
-    note: '渋谷スカイ. ⚠ Билеты заранее СИЛЬНО.',
+    nameJa: '渋谷スカイ',
+    note: '⚠ Билеты заранее СИЛЬНО.',
   },
   {
     slug: 'teamlab-planets',
@@ -502,7 +508,8 @@ export const places: Place[] = [
     mapsQuery: 'TeamLab Planets, Tokyo, Japan',
     coords: { lat: 35.6488, lng: 139.7905 },
     photo: 'photos/tokyo/teamlab_planets.jpg',
-    note: 'チームラボプラネッツ. ⚠ Билет СИЛЬНО заранее.',
+    nameJa: 'チームラボプラネッツ',
+    note: '⚠ Билет СИЛЬНО заранее.',
   },
   {
     slug: 'senso-ji',
@@ -517,7 +524,7 @@ export const places: Place[] = [
     coords: { lat: 35.7148, lng: 139.7967 },
     photo: 'photos/tokyo/sensoji.jpg',
     anime: ['Клинок, рассекающий демонов (Kimetsu no Yaiba / Demon Slayer)'],
-    note: '浅草寺・浅草',
+    nameJa: '浅草寺・浅草',
   },
   {
     slug: 'shinjuku',
@@ -533,7 +540,7 @@ export const places: Place[] = [
     photo: 'photos/tokyo/shinjuku.jpg',
     combinesWith: ['golden-gai'],
     anime: ['Твоё имя (Kimi no Na wa / Your Name)'],
-    note: '新宿',
+    nameJa: '新宿',
   },
   {
     slug: 'suga-shrine',
@@ -548,7 +555,8 @@ export const places: Place[] = [
     coords: { lat: 35.6863, lng: 139.7223 },
     photo: 'photos/tokyo/suga-shrine.webp',
     anime: ['Твоё имя (Kimi no Na wa / Your Name)'],
-    note: '須賀神社. Лестница Отокодзака с красными перилами — финальная сцена.',
+    nameJa: '須賀神社',
+    note: 'Лестница Отокодзака с красными перилами — финальная сцена.',
   },
   {
     slug: 'ghibli-museum',
@@ -563,7 +571,8 @@ export const places: Place[] = [
     coords: { lat: 35.6962, lng: 139.5704 },
     photo: 'photos/tokyo/ghibli-museum.jpg',
     anime: ['Мой сосед Тоторо (Tonari no Totoro / My Neighbor Totoro)', 'Унесённые призраками (Sen to Chihiro / Spirited Away)', 'Небесный замок Лапута (Tenkuu no Shiro Laputa / Castle in the Sky)'],
-    note: '三鷹の森ジブリ美術館. ⚠ Билеты заранее СИЛЬНО: именные, на дату и время, в продаже с 10-го числа предыдущего месяца (Lawson), берут с паспортом.',
+    nameJa: '三鷹の森ジブリ美術館',
+    note: '⚠ Билеты заранее СИЛЬНО: именные, на дату и время, в продаже с 10-го числа предыдущего месяца (Lawson), берут с паспортом.',
   },
   {
     slug: 'meiji-shrine',
@@ -577,7 +586,7 @@ export const places: Place[] = [
     mapsQuery: 'Meiji Shrine, Tokyo, Japan',
     coords: { lat: 35.6764, lng: 139.6993 },
     photo: 'photos/tokyo/meiji_shrine.jpg',
-    note: '明治神宮',
+    nameJa: '明治神宮',
   },
   {
     slug: 'akihabara',
@@ -592,7 +601,7 @@ export const places: Place[] = [
     coords: { lat: 35.7022, lng: 139.7745 },
     photo: 'photos/tokyo/akihabara.jpg',
     anime: ['Стейнз гейт (Steins;Gate)', 'Лав Лайв! (Love Live! School Idol Project)'],
-    note: '秋葉原',
+    nameJa: '秋葉原',
   },
   {
     slug: 'tokyo-tower',
@@ -607,7 +616,7 @@ export const places: Place[] = [
     coords: { lat: 35.6586, lng: 139.7454 },
     photo: 'photos/tokyo/tokyo_tower.jpg',
     anime: ['Сейлор Мун (Sailor Moon)', 'Сакура — собирательница карт (Cardcaptor Sakura)', 'Рыцари магии (Magic Knight Rayearth)'],
-    note: '東京タワー',
+    nameJa: '東京タワー',
   },
   {
     slug: 'harajuku-takeshita',
@@ -621,7 +630,7 @@ export const places: Place[] = [
     mapsQuery: 'Harajuku Takeshita, Tokyo, Japan',
     coords: { lat: 35.6716, lng: 139.7031 },
     photo: 'photos/tokyo/harajuku.jpg',
-    note: '原宿',
+    nameJa: '原宿',
   },
   {
     slug: 'golden-gai',
@@ -636,7 +645,7 @@ export const places: Place[] = [
     coords: { lat: 35.694, lng: 139.7048 },
     photo: 'photos/tokyo/golden_gai.jpg',
     combinesWith: ['shinjuku'],
-    note: 'ゴールデン街',
+    nameJa: 'ゴールデン街',
   },
   {
     slug: 'ginza-yurakucho',
@@ -650,7 +659,7 @@ export const places: Place[] = [
     mapsQuery: 'Ginza Yurakucho, Tokyo, Japan',
     coords: { lat: 35.6717, lng: 139.765 },
     photo: 'photos/tokyo/ginza.jpg',
-    note: '銀座・有楽町',
+    nameJa: '銀座・有楽町',
   },
   {
     slug: 'shimokitazawa',
@@ -664,7 +673,7 @@ export const places: Place[] = [
     mapsQuery: 'Shimokitazawa, Tokyo, Japan',
     coords: { lat: 35.6613, lng: 139.668 },
     photo: 'photos/tokyo/shimokitazawa.webp',
-    note: '下北沢',
+    nameJa: '下北沢',
   },
   {
     slug: 'omotesando',
@@ -678,7 +687,7 @@ export const places: Place[] = [
     mapsQuery: 'Omotesando, Tokyo, Japan',
     coords: { lat: 35.6657, lng: 139.7124 },
     photo: 'photos/tokyo/omotesando.jpeg',
-    note: '表参道',
+    nameJa: '表参道',
   },
   {
     slug: 'ueno',
@@ -692,7 +701,7 @@ export const places: Place[] = [
     mapsQuery: 'Ueno, Tokyo, Japan',
     coords: { lat: 35.7156, lng: 139.7745 },
     photo: 'photos/tokyo/ueno_park.jpeg',
-    note: '上野',
+    nameJa: '上野',
   },
   {
     slug: 'daikanyama-nakameguro',
@@ -706,7 +715,7 @@ export const places: Place[] = [
     mapsQuery: 'Daikanyama Nakameguro, Tokyo, Japan',
     coords: { lat: 35.6478, lng: 139.6995 },
     photo: 'photos/tokyo/daikanyama.jpeg',
-    note: '代官山・中目黒',
+    nameJa: '代官山・中目黒',
   },
   {
     slug: 'yanaka',
@@ -720,7 +729,7 @@ export const places: Place[] = [
     mapsQuery: 'Yanaka, Tokyo, Japan',
     coords: { lat: 35.7276, lng: 139.7669 },
     photo: 'photos/tokyo/yanaka.webp',
-    note: '谷中',
+    nameJa: '谷中',
   },
   {
     slug: 'ebisu',
@@ -734,7 +743,7 @@ export const places: Place[] = [
     mapsQuery: 'Ebisu, Tokyo, Japan',
     coords: { lat: 35.6467, lng: 139.71 },
     photo: 'photos/tokyo/ebisu.jpeg',
-    note: '恵比寿',
+    nameJa: '恵比寿',
   },
   {
     slug: 'bar-lupin',
@@ -762,7 +771,7 @@ export const places: Place[] = [
     mapsQuery: 'Kagurazaka, Tokyo, Japan',
     coords: { lat: 35.7016, lng: 139.7406 },
     photo: 'photos/tokyo/kagurazaka.jpeg',
-    note: '神楽坂',
+    nameJa: '神楽坂',
   },
   {
     slug: 'hijiri-bashi',
@@ -777,7 +786,7 @@ export const places: Place[] = [
     coords: { lat: 35.6997, lng: 139.7656 },
     photo: 'photos/tokyo/hijiri_bashi.jpeg',
     anime: ['Судзумэ, закрывающая двери (Suzume no Tojimari / Suzume)'],
-    note: '聖橋',
+    nameJa: '聖橋',
   },
   {
     slug: 'kitte-marunouchi',
@@ -791,7 +800,7 @@ export const places: Place[] = [
     mapsQuery: 'Kitte Marunouchi, Tokyo, Japan',
     coords: { lat: 35.6796, lng: 139.7647 },
     photo: 'photos/tokyo/kitte_marunouchi.jpg',
-    note: 'KITTE丸の内',
+    nameJa: 'KITTE丸の内',
   },
   {
     slug: 'latte-art-mania',
@@ -823,7 +832,7 @@ export const places: Place[] = [
     dayTripGroup: 'tokyo-fuji',
     incompatibleWith: ['hakone', 'kawaguchiko', 'gotemba-premium-outlets'],
     anime: ['Слэм-данк (Slam Dunk)'],
-    note: '鎌倉',
+    nameJa: '鎌倉',
   },
   {
     slug: 'hakone',
@@ -842,7 +851,7 @@ export const places: Place[] = [
     incompatibleWith: ['kamakura', 'kawaguchiko'],
     combinesWith: ['gotemba-premium-outlets'],
     anime: ['Евангелион (Neon Genesis Evangelion)'],
-    note: '箱根',
+    nameJa: '箱根',
   },
   {
     slug: 'kawaguchiko',
@@ -861,7 +870,7 @@ export const places: Place[] = [
     dayTripGroup: 'tokyo-fuji',
     incompatibleWith: ['kamakura', 'hakone', 'gotemba-premium-outlets'],
     anime: ['Ленивые походы (Yuru Camp / ゆるキャン△)'],
-    note: '河口湖',
+    nameJa: '河口湖',
   },
   {
     slug: 'gotemba-premium-outlets',
@@ -879,6 +888,7 @@ export const places: Place[] = [
     dayTripGroup: 'tokyo-fuji',
     incompatibleWith: ['kamakura', 'kawaguchiko'],
     combinesWith: ['hakone'],
-    note: '御殿場プレミアム・アウトレット. Можно совместить с Хаконэ в один день; как самостоятельный выезд — шопинг + вид на Фудзи.',
+    nameJa: '御殿場プレミアム・アウトレット',
+    note: 'Можно совместить с Хаконэ в один день; как самостоятельный выезд — шопинг + вид на Фудзи.',
   },
 ];

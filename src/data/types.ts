@@ -22,6 +22,9 @@ export interface Place {
   dayTripGroup?: string;
   incompatibleWith?: string[];
   combinesWith?: string[];
+  nameJa?: string;
+  hours?: string;
+  transport?: string;
   note?: string;
   anime?: string[];
   foodSpot?: boolean;
@@ -41,10 +44,16 @@ export interface CityMeta {
 
 export interface DayTripGroup { id: string; label: string; note?: string; }
 
+export interface TipCategory {
+  category: string;
+  icon: string;
+  items: string[];
+}
+
 export interface TripMeta {
   route: string;
   dates: string;
   summary: string;
-  globalTips: string[];
+  globalTips: TipCategory[];
   departure: string[];
 }

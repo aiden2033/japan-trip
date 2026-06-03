@@ -7,6 +7,7 @@ import SearchOverlay from './components/SearchOverlay';
 import Home from './pages/Home';
 import CityPage from './pages/CityPage';
 import PlaceDetail from './pages/PlaceDetail';
+import Passport from './pages/Passport';
 
 export default function App() {
   return (
@@ -49,6 +50,7 @@ function Shell() {
       <main className="flex-1 pb-24 md:pb-8">
         <Routes>
           <Route path="/" element={<Home onSearch={openSearch} />} />
+          <Route path="/passport" element={<Passport />} />
           <Route path="/:city" element={<CityPage />} />
           <Route path="/:city/:slug" element={<PlaceDetail />} />
         </Routes>
