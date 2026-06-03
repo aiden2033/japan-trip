@@ -5,6 +5,7 @@ import { cities } from '../data/cities';
 import { places } from '../data/places';
 import { dayTripGroups } from '../data/trip';
 import { CITY_ACCENT } from '../lib/tags';
+import { useVisited } from '../lib/useStoredSet';
 import Collapsible from '../components/Collapsible';
 import PlaceCard from '../components/PlaceCard';
 import TagChip from '../components/TagChip';
@@ -18,6 +19,7 @@ export default function CityPage() {
   const { city } = useParams();
   const navigate = useNavigate();
   const [activeTags, setActiveTags] = useState<Tag[]>([]);
+  const visited = useVisited();
 
   const cityMeta = useMemo(
     () => (isCityId(city) ? cities.find((c) => c.id === city) : undefined),
@@ -44,9 +46,14 @@ export default function CityPage() {
   const matchesTags = (place: Place) =>
     activeTags.length === 0 || activeTags.every((tag) => place.tags.includes(tag));
 
+  const visitedLast = (list: Place[]): Place[] => [
+    ...list.filter((p) => !visited.has(p)),
+    ...list.filter((p) => visited.has(p)),
+  ];
+
   const regularPlaces = cityPlaces.filter((p) => !p.isDayTrip && matchesTags(p));
-  const mainPlaces = regularPlaces.filter((p) => !p.foodSpot);
-  const cafePlaces = regularPlaces.filter((p) => p.foodSpot);
+  const mainPlaces = visitedLast(regularPlaces.filter((p) => !p.foodSpot));
+  const cafePlaces = visitedLast(regularPlaces.filter((p) => p.foodSpot));
   const dayTripPlaces = cityPlaces.filter((p) => p.isDayTrip && matchesTags(p));
 
   const groupsForCity = dayTripGroups.filter((group) =>
@@ -153,7 +160,7 @@ export default function CityPage() {
       )}
 
       {groupsForCity.map((group) => {
-        const groupPlaces = dayTripPlaces.filter((p) => p.dayTripGroup === group.id);
+        const groupPlaces = visitedLast(dayTripPlaces.filter((p) => p.dayTripGroup === group.id));
         if (groupPlaces.length === 0) return null;
         return (
           <section

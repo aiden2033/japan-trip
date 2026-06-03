@@ -1,6 +1,8 @@
 import type { Place } from '../data/types';
 import { formatHours } from '../lib/tags';
+import { useVisited } from '../lib/useStoredSet';
 import PlaceImage from './PlaceImage';
+import PlaceToggles from './PlaceToggles';
 import TagChip from './TagChip';
 import DayTripBadge from './DayTripBadge';
 import IncompatibleNote from './IncompatibleNote';
@@ -13,6 +15,7 @@ interface PlaceCardProps {
 
 export default function PlaceCard({ place, places, onOpen }: PlaceCardProps) {
   const dayTrip = Boolean(place.isDayTrip);
+  const isVisited = useVisited().has(place);
   const frame = dayTrip
     ? 'border-amber-300 bg-amber-50/40'
     : 'border-slate-200 bg-white';
@@ -28,9 +31,19 @@ export default function PlaceCard({ place, places, onOpen }: PlaceCardProps) {
           onOpen(place.slug);
         }
       }}
-      className={`flex w-full cursor-pointer flex-col overflow-hidden rounded-xl border text-left shadow-sm transition hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 ${frame}`}
+      className={`flex w-full cursor-pointer flex-col overflow-hidden rounded-xl border text-left shadow-sm transition hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 ${frame} ${isVisited ? 'opacity-60' : ''}`}
     >
-      <PlaceImage place={place} />
+      <div className="relative">
+        <PlaceImage place={place} />
+        <div className="absolute right-2 top-2">
+          <PlaceToggles place={place} />
+        </div>
+        {isVisited && (
+          <span className="absolute left-2 top-2 inline-flex items-center rounded-full bg-emerald-600 px-2 py-0.5 text-xs font-semibold text-white shadow">
+            ✓ посещено
+          </span>
+        )}
+      </div>
 
       <div className="flex min-h-[44px] flex-col gap-2 p-3">
         <div>

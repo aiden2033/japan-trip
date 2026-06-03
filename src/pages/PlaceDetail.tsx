@@ -4,6 +4,7 @@ import { places } from '../data/places';
 import { cities } from '../data/cities';
 import { CITY_ACCENT, formatHours, mapsUrl } from '../lib/tags';
 import PlaceImage from '../components/PlaceImage';
+import PlaceToggles from '../components/PlaceToggles';
 import TagChip from '../components/TagChip';
 import IncompatibleNote from '../components/IncompatibleNote';
 
@@ -73,6 +74,8 @@ export default function PlaceDetail() {
           <TagChip key={tag} tag={tag} />
         ))}
       </div>
+
+      <PlaceToggles place={place} variant="detail" />
 
       <div className="flex flex-wrap items-center gap-3 text-sm text-slate-700">
         <span className="font-medium">⏱ {formatHours(place.timeEstimateHours)}</span>
