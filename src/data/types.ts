@@ -16,6 +16,7 @@ export interface Place {
   summary?: string;
   description: string;
   mapsQuery: string;
+  coords?: { lat: number; lng: number };
   photo?: string;
   isDayTrip?: boolean;
   dayTripGroup?: string;

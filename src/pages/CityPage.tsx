@@ -1,14 +1,16 @@
-import { useMemo, useState } from 'react';
+import { lazy, Suspense, useMemo, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import type { CityId, Place, Tag } from '../data/types';
 import { cities } from '../data/cities';
 import { places } from '../data/places';
 import { dayTripGroups } from '../data/trip';
 import { CITY_ACCENT } from '../lib/tags';
-import { useVisited } from '../lib/useStoredSet';
+import { placeKey, useVisited } from '../lib/useStoredSet';
 import Collapsible from '../components/Collapsible';
 import PlaceCard from '../components/PlaceCard';
 import TagChip from '../components/TagChip';
+
+const CityMap = lazy(() => import('../components/CityMap'));
 
 const CITY_IDS: CityId[] = ['osaka', 'kyoto', 'tokyo'];
 
@@ -19,7 +21,9 @@ export default function CityPage() {
   const { city } = useParams();
   const navigate = useNavigate();
   const [activeTags, setActiveTags] = useState<Tag[]>([]);
+  const [view, setView] = useState<'list' | 'map'>('list');
   const visited = useVisited();
+  const visitedItems = visited.items;
 
   const cityMeta = useMemo(
     () => (isCityId(city) ? cities.find((c) => c.id === city) : undefined),
@@ -30,6 +34,33 @@ export default function CityPage() {
     () => (isCityId(city) ? places.filter((p) => p.city === city) : []),
     [city],
   );
+
+  const regularPlaces = useMemo(
+    () => cityPlaces.filter((p) => !p.isDayTrip && matchesTags(p, activeTags)),
+    [cityPlaces, activeTags],
+  );
+
+  const mainPlaces = useMemo(
+    () => visitedLast(regularPlaces.filter((p) => !p.foodSpot), visitedItems),
+    [regularPlaces, visitedItems],
+  );
+
+  const cafePlaces = useMemo(
+    () => visitedLast(regularPlaces.filter((p) => p.foodSpot), visitedItems),
+    [regularPlaces, visitedItems],
+  );
+
+  const dayTripPlaces = useMemo(
+    () => cityPlaces.filter((p) => p.isDayTrip && matchesTags(p, activeTags)),
+    [cityPlaces, activeTags],
+  );
+
+  const groupsForCity = useMemo(
+    () => dayTripGroups.filter((group) => dayTripPlaces.some((p) => p.dayTripGroup === group.id)),
+    [dayTripPlaces],
+  );
+
+  const mapCityPlaces = useMemo(() => [...mainPlaces, ...cafePlaces], [mainPlaces, cafePlaces]);
 
   if (!cityMeta) {
     return <Navigate to="/" replace />;
@@ -42,23 +73,6 @@ export default function CityPage() {
     setActiveTags((prev) =>
       prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
     );
-
-  const matchesTags = (place: Place) =>
-    activeTags.length === 0 || activeTags.every((tag) => place.tags.includes(tag));
-
-  const visitedLast = (list: Place[]): Place[] => [
-    ...list.filter((p) => !visited.has(p)),
-    ...list.filter((p) => visited.has(p)),
-  ];
-
-  const regularPlaces = cityPlaces.filter((p) => !p.isDayTrip && matchesTags(p));
-  const mainPlaces = visitedLast(regularPlaces.filter((p) => !p.foodSpot));
-  const cafePlaces = visitedLast(regularPlaces.filter((p) => p.foodSpot));
-  const dayTripPlaces = cityPlaces.filter((p) => p.isDayTrip && matchesTags(p));
-
-  const groupsForCity = dayTripGroups.filter((group) =>
-    dayTripPlaces.some((p) => p.dayTripGroup === group.id),
-  );
 
   const openPlace = (slug: string) => navigate(`/${cityMeta.id}/${slug}`);
 
@@ -126,6 +140,35 @@ export default function CityPage() {
         </section>
       )}
 
+      <section className="flex items-center gap-1 self-start rounded-full bg-slate-100 p-1">
+        {(['list', 'map'] as const).map((v) => (
+          <button
+            key={v}
+            type="button"
+            onClick={() => setView(v)}
+            aria-pressed={view === v}
+            className={`inline-flex min-h-[44px] items-center rounded-full px-4 text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 ${
+              view === v ? 'bg-white text-slate-900 shadow' : 'text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            {v === 'list' ? '☰ Список' : '🗺 Карта'}
+          </button>
+        ))}
+      </section>
+
+      {view === 'map' ? (
+        <Suspense
+          fallback={<div className="h-[60vh] animate-pulse rounded-2xl bg-slate-100" />}
+        >
+          <CityMap
+            city={cityMeta.id}
+            cityPlaces={mapCityPlaces}
+            dayTripPlaces={dayTripPlaces}
+            onOpen={openPlace}
+          />
+        </Suspense>
+      ) : (
+      <>
       <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {mainPlaces.map((place) => (
           <PlaceCard
@@ -160,7 +203,7 @@ export default function CityPage() {
       )}
 
       {groupsForCity.map((group) => {
-        const groupPlaces = visitedLast(dayTripPlaces.filter((p) => p.dayTripGroup === group.id));
+        const groupPlaces = visitedLast(dayTripPlaces.filter((p) => p.dayTripGroup === group.id), visitedItems);
         if (groupPlaces.length === 0) return null;
         return (
           <section
@@ -187,9 +230,19 @@ export default function CityPage() {
           </section>
         );
       })}
+      </>
+      )}
     </div>
   );
 }
+
+const matchesTags = (place: Place, activeTags: Tag[]): boolean =>
+  activeTags.length === 0 || activeTags.every((tag) => place.tags.includes(tag));
+
+const visitedLast = (list: Place[], visitedItems: Set<string>): Place[] => [
+  ...list.filter((p) => !visitedItems.has(placeKey(p))),
+  ...list.filter((p) => visitedItems.has(placeKey(p))),
+];
 
 const uniqueTags = (list: Place[]): Tag[] => {
   const set = new Set<Tag>();
