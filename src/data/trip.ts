@@ -72,6 +72,16 @@ const globalTips: TipCategory[] = [
 ];
 
 
+export const trip: TripMeta = {
+  route: 'Osaka → Kyoto → Tokyo',
+  dates: 'конец авг - середина сен 2026, вылет 13 сентября',
+  summary: '~15 ночей, линейный маршрут Осака → Киото → Токио, дейтрипы из каждой базы, последняя ночь в отеле у аэропорта Ханэда.',
+  globalTips,
+  departure: [
+    'Ф',
+  ],
+};
+
 export const dayTripGroups: DayTripGroup[] = [
   { id: 'osaka-daytrip', label: 'Дейтрипы из Осаки — выбери один на день' },
   {
