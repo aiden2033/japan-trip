@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import type { LatLng } from './geo';
 
 type GeoStatus = 'idle' | 'locating' | 'ready' | 'unavailable';
@@ -25,26 +25,8 @@ export const useGeolocation = (): Geolocation => {
         setStatus('ready');
       },
       () => setStatus('unavailable'),
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 },
     );
-  }, []);
-
-  useEffect(() => {
-    if (!supported) return;
-    let active = true;
-    const watchId = navigator.geolocation.watchPosition(
-      ({ coords }) => {
-        if (!active) return;
-        setPosition({ lat: coords.latitude, lng: coords.longitude });
-        setStatus('ready');
-      },
-      () => active && setStatus('unavailable'),
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 },
-    );
-    return () => {
-      active = false;
-      navigator.geolocation.clearWatch(watchId);
-    };
   }, []);
 
   return { position, status, supported, request };

@@ -1,12 +1,16 @@
+import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import type { CityId } from '../data/types';
 import { places } from '../data/places';
 import { cities } from '../data/cities';
-import { CITY_ACCENT, formatHours, mapsUrl } from '../lib/tags';
+import { CITY_ACCENT, formatHours } from '../lib/tags';
+import { formatDistance } from '../lib/geo';
+import { nearbyPlaces } from '../lib/nearby';
 import PlaceImage from '../components/PlaceImage';
 import PlaceToggles from '../components/PlaceToggles';
 import TagChip from '../components/TagChip';
 import IncompatibleNote from '../components/IncompatibleNote';
+import NavHandoff from '../components/NavHandoff';
 
 const CITY_IDS: CityId[] = ['osaka', 'kyoto', 'tokyo'];
 
@@ -16,6 +20,7 @@ const isCityId = (value: string | undefined): value is CityId =>
 export default function PlaceDetail() {
   const { city, slug } = useParams();
   const navigate = useNavigate();
+  const [showJapanese, setShowJapanese] = useState(false);
 
   const cityMeta = isCityId(city) ? cities.find((c) => c.id === city) : undefined;
   const place = places.find((p) => p.slug === slug && p.city === city);
@@ -39,6 +44,14 @@ export default function PlaceDetail() {
 
   const accent = CITY_ACCENT[place.city];
   const goBack = () => navigate(`/${cityMeta.id}`);
+
+  const nearby = place.coords
+    ? nearbyPlaces(place.coords, places, {
+        sameCity: place.city,
+        excludeSlug: place.slug,
+        limit: 4,
+      })
+    : [];
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-4 px-3 py-4">
@@ -131,14 +144,52 @@ export default function PlaceDetail() {
         </div>
       )}
 
-      <a
-        href={mapsUrl(place.mapsQuery)}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex min-h-[44px] w-fit items-center gap-2 rounded-full bg-slate-900 px-5 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
-      >
-        🗺 Открыть в Google Maps
-      </a>
+      <NavHandoff
+        coords={place.coords}
+        query={place.mapsQuery}
+        name={place.nameRu}
+        transport={place.transport}
+      />
+
+      {place.nameJa && (
+        <div className="flex flex-col gap-2">
+          <button
+            type="button"
+            onClick={() => setShowJapanese((v) => !v)}
+            aria-expanded={showJapanese}
+            className="inline-flex min-h-[44px] w-fit items-center gap-2 rounded-full border border-slate-300 bg-white px-5 text-sm font-semibold text-slate-700 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+          >
+            🗾 Показать на японском
+          </button>
+          {showJapanese && (
+            <div className="flex flex-col gap-3 rounded-2xl border-2 border-slate-900 bg-white p-5 text-center text-slate-900">
+              <p className="text-4xl font-extrabold leading-tight">{place.nameJa}</p>
+              <p className="text-lg font-semibold leading-snug">{place.mapsQuery}</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {nearby.length > 0 && (
+        <div className="flex flex-col gap-2">
+          <p className="text-sm font-semibold text-slate-900">📍 Рядом (пешком)</p>
+          <ul className="flex flex-col gap-1.5">
+            {nearby.map(({ place: near, km }) => (
+              <li key={near.slug}>
+                <Link
+                  to={`/${near.city}/${near.slug}`}
+                  className="flex min-h-[44px] items-center justify-between gap-3 rounded-xl border border-slate-200 px-3 text-sm hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+                >
+                  <span className="font-medium text-slate-800">{near.nameRu}</span>
+                  <span className="shrink-0 text-slate-500">
+                    {formatDistance(km)} · ⏱ {formatHours(near.timeEstimateHours)}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

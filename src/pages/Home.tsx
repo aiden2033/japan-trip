@@ -2,8 +2,9 @@ import { Link } from 'react-router-dom';
 import { trip } from '../data/trip';
 import { cities } from '../data/cities';
 import { places } from '../data/places';
+import type { CityId } from '../data/types';
 import { CITY_ACCENT } from '../lib/tags';
-import { useFavorites, placeKey } from '../lib/useStoredSet';
+import { useFavorites, useVisited, placeKey } from '../lib/useStoredSet';
 import Collapsible from '../components/Collapsible';
 
 interface HomeProps {
@@ -13,8 +14,18 @@ interface HomeProps {
 const routeSteps = (route: string): string[] =>
   route.split('→').map((step) => step.trim());
 
+const ROUTE_CITY: Record<string, CityId> = {
+  Osaka: 'osaka',
+  Kyoto: 'kyoto',
+  Tokyo: 'tokyo',
+};
+
+const stepCityId = (step: string): CityId | undefined =>
+  ROUTE_CITY[step.split(' ')[0]];
+
 export default function Home({ onSearch }: HomeProps) {
   const favorites = useFavorites();
+  const visited = useVisited();
   const favoritePlaces = places.filter((p) => favorites.items.has(placeKey(p)));
 
   return (
@@ -25,16 +36,30 @@ export default function Home({ onSearch }: HomeProps) {
         <p className="text-xs font-medium text-slate-500">{trip.dates}</p>
 
         <div className="flex flex-wrap items-center gap-1.5">
-          {routeSteps(trip.route).map((step, index) => (
-            <span key={step} className="flex items-center gap-1.5">
-              {index > 0 && (
-                <span aria-hidden="true" className="text-slate-400">→</span>
-              )}
-              <span className="inline-flex items-center rounded-full bg-slate-900 px-3 py-1 text-xs font-semibold text-white">
-                {step}
+          {routeSteps(trip.route).map((step, index) => {
+            const cityId = stepCityId(step);
+            const accent = cityId ? CITY_ACCENT[cityId] : null;
+            return (
+              <span key={step} className="flex items-center gap-1.5">
+                {index > 0 && (
+                  <span aria-hidden="true" className="text-slate-400">→</span>
+                )}
+                {cityId && accent ? (
+                  <Link
+                    to={`/${cityId}`}
+                    className="inline-flex min-h-[44px] items-center rounded-full px-3 py-1 text-xs font-semibold transition hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+                    style={{ backgroundColor: accent.bg, color: accent.text }}
+                  >
+                    {step}
+                  </Link>
+                ) : (
+                  <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                    {step}
+                  </span>
+                )}
               </span>
-            </span>
-          ))}
+            );
+          })}
         </div>
       </section>
 
@@ -84,6 +109,8 @@ export default function Home({ onSearch }: HomeProps) {
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
           {cities.map((city) => {
             const accent = CITY_ACCENT[city.id];
+            const cityPlaces = places.filter((p) => p.city === city.id);
+            const visitedCount = cityPlaces.filter((p) => visited.items.has(placeKey(p))).length;
             return (
               <Link
                 key={city.id}
@@ -94,6 +121,9 @@ export default function Home({ onSearch }: HomeProps) {
                 <span className="text-base font-extrabold">{city.nameRu}</span>
                 <span className="text-xs opacity-90">
                   {city.nameEn}
+                </span>
+                <span className="text-xs font-semibold opacity-90">
+                  {visitedCount}/{cityPlaces.length} пройдено
                 </span>
               </Link>
             );

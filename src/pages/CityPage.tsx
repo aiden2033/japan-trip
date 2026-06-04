@@ -12,9 +12,9 @@ import { placeKey, useVisited } from '../lib/useStoredSet';
 import Collapsible from '../components/Collapsible';
 import PlaceCard from '../components/PlaceCard';
 import TagChip from '../components/TagChip';
-import AnimeRoutes from '../components/AnimeRoutes';
 
 const CityMap = lazy(() => import('../components/CityMap'));
+const AnimeRoutes = lazy(() => import('../components/AnimeRoutes'));
 
 const CITY_IDS: CityId[] = ['osaka', 'kyoto', 'tokyo'];
 
@@ -179,29 +179,37 @@ export default function CityPage() {
           )}
         </section>
 
-        {view === 'list' && position && (
+        {view === 'list' && geo.supported && (
           <button
             type="button"
-            onClick={() => setSortByDistance((prev) => !prev)}
+            disabled={geo.status === 'locating'}
+            onClick={() => {
+              if (!position) geo.request();
+              setSortByDistance((prev) => !prev);
+            }}
             aria-pressed={sortByDistance}
-            className={`inline-flex min-h-[44px] items-center rounded-full px-4 text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 ${
-              sortByDistance
+            className={`inline-flex min-h-[44px] items-center rounded-full px-4 text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 disabled:cursor-not-allowed disabled:opacity-60 ${
+              activeSort
                 ? 'bg-sky-600 text-white shadow'
                 : 'bg-slate-100 text-slate-500 hover:text-slate-800'
             }`}
           >
-            📍 Рядом со мной
+            {geo.status === 'locating' ? '📍 Определяю…' : '📍 Рядом со мной'}
           </button>
         )}
       </div>
 
       {view === 'anime' ? (
-        <AnimeRoutes
-          city={cityMeta.id}
-          routes={animeRoutes}
-          cityPlaces={cityPlaces}
-          onOpen={openPlace}
-        />
+        <Suspense
+          fallback={<div className="h-[60vh] animate-pulse rounded-2xl bg-slate-100" />}
+        >
+          <AnimeRoutes
+            city={cityMeta.id}
+            routes={animeRoutes}
+            cityPlaces={cityPlaces}
+            onOpen={openPlace}
+          />
+        </Suspense>
       ) : view === 'map' ? (
         <Suspense
           fallback={<div className="h-[60vh] animate-pulse rounded-2xl bg-slate-100" />}

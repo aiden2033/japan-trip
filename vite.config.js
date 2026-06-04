@@ -31,12 +31,23 @@ export default defineConfig({
                 ],
             },
             workbox: {
-                // Precache app shell and local trip photos; OSM tiles stay online-only.
+                // Precache app shell and local trip photos; viewed OSM tiles are cached at runtime (CacheFirst).
                 globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,jpg,jpeg,woff,woff2}'],
                 // Photos can be large; lift the per-file precache cap.
                 maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
                 navigateFallback: 'index.html',
                 cleanupOutdatedCaches: true,
+                runtimeCaching: [
+                    {
+                        urlPattern: /^https:\/\/[a-c]?\.?tile\.openstreetmap\.org\/.*/i,
+                        handler: 'CacheFirst',
+                        options: {
+                            cacheName: 'osm-tiles',
+                            expiration: { maxEntries: 600, maxAgeSeconds: 60 * 60 * 24 * 30 },
+                            cacheableResponse: { statuses: [0, 200] },
+                        },
+                    },
+                ],
             },
         }),
     ],

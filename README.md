@@ -6,7 +6,7 @@ A small, fast, offline-friendly single-page guide for one specific trip across J
 
 Небольшой быстрый офлайн-гид по конкретной поездке: места сгруппированы по городам, компактные теги, оценки времени, подсказки "когда идти", пометки дейтрипов и нечёткий поиск на русском и английском. Никаких сетевых запросов и зависимости от `localStorage`.
 
-**Route / Маршрут:** `Osaka (4) → Kyoto (4) → Tokyo (6) → Haneda (1)`
+**Route / Маршрут:** `Osaka → Kyoto → Tokyo`
 
 ## Run locally / Локальный запуск
 

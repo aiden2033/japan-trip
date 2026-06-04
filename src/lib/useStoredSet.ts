@@ -4,6 +4,19 @@ import type { Place } from '../data/types';
 export const placeKey = (place: Pick<Place, 'city' | 'slug'>): string =>
   `${place.city}:${place.slug}`;
 
+export const SCHEMA_VERSION = 1;
+const SCHEMA_KEY = 'jt:schema';
+
+const markSchema = (): void => {
+  try {
+    if (localStorage.getItem(SCHEMA_KEY) === null) {
+      localStorage.setItem(SCHEMA_KEY, String(SCHEMA_VERSION));
+    }
+  } catch {
+    // localStorage unavailable (private mode / quota) — schema marker is best-effort only.
+  }
+};
+
 const read = (storageKey: string): Set<string> => {
   try {
     const raw = localStorage.getItem(storageKey);
@@ -33,6 +46,7 @@ const stores = new Map<string, Store>();
 const getStore = (storageKey: string): Store => {
   let store = stores.get(storageKey);
   if (!store) {
+    markSchema();
     store = { snapshot: read(storageKey), listeners: new Set() };
     stores.set(storageKey, store);
   }
