@@ -3,14 +3,17 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import type { CityId } from '../data/types';
 import { places } from '../data/places';
 import { cities } from '../data/cities';
+import { bookingByPlaceKey } from '../data/bookings';
 import { CITY_ACCENT, formatHours } from '../lib/tags';
 import { formatDistance } from '../lib/geo';
 import { nearbyPlaces } from '../lib/nearby';
+import { placeKey } from '../lib/useStoredSet';
 import PlaceImage from '../components/PlaceImage';
 import PlaceToggles from '../components/PlaceToggles';
 import TagChip from '../components/TagChip';
 import IncompatibleNote from '../components/IncompatibleNote';
 import NavHandoff from '../components/NavHandoff';
+import BookingActions from '../components/BookingActions';
 
 const CITY_IDS: CityId[] = ['osaka', 'kyoto', 'tokyo'];
 
@@ -44,6 +47,7 @@ export default function PlaceDetail() {
 
   const accent = CITY_ACCENT[place.city];
   const goBack = () => navigate(`/${cityMeta.id}`);
+  const booking = bookingByPlaceKey.get(placeKey(place));
 
   const nearby = place.coords
     ? nearbyPlaces(place.coords, places, {
@@ -128,6 +132,19 @@ export default function PlaceDetail() {
       )}
 
       <IncompatibleNote place={place} places={places} />
+
+      {booking && (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-3">
+          <p className="text-sm font-semibold text-amber-900">🎫 Бронь / билеты</p>
+          <p className="mt-1 text-sm text-amber-800">{booking.note}</p>
+          <p className="mt-1 text-xs font-medium text-amber-700">
+            Когда: {booking.leadTime} · проверено: {booking.checkedAt}
+          </p>
+          <div className="mt-2">
+            <BookingActions booking={booking} compact />
+          </div>
+        </div>
+      )}
 
       {place.anime && place.anime.length > 0 && (
         <div className="rounded-xl border border-fuchsia-200 bg-fuchsia-50 p-3">

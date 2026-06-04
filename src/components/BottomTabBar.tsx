@@ -46,6 +46,24 @@ export default function BottomTabBar({ onSearch }: BottomTabBarProps) {
         ))}
         <li className="flex-1 border-l border-slate-200">
           <NavLink
+            to="/bookings"
+            end
+            aria-label="Брони и билеты"
+            title="Брони и билеты"
+            className="flex min-h-[44px] flex-col items-center justify-center gap-0.5 py-1.5 text-[11px] font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-slate-400"
+          >
+            {({ isActive }) => (
+              <>
+                <span aria-hidden="true" className="text-lg leading-none">🎫</span>
+                <span className={isActive ? 'text-slate-900' : 'text-slate-500'}>
+                  Бронь
+                </span>
+              </>
+            )}
+          </NavLink>
+        </li>
+        <li className="flex-1 border-l border-slate-200">
+          <NavLink
             to="/passport"
             end
             aria-label="Книжка странника"

@@ -30,6 +30,25 @@ export interface Place {
   foodSpot?: boolean;
 }
 
+export type BookingKind = 'ticket' | 'reservation' | 'queue';
+
+export interface BookingLink {
+  label: string;
+  url: string;
+  kind?: 'official' | 'partner' | 'concierge' | 'phone' | 'info';
+}
+
+export interface BookingItem {
+  placeSlug: string;
+  city: CityId;
+  kind: BookingKind;
+  priority: 'critical' | 'recommended';
+  leadTime: string;
+  note: string;
+  links: BookingLink[];
+  checkedAt: string;
+}
+
 export interface StayArea { area: string; why: string; }
 
 export interface CityMeta {

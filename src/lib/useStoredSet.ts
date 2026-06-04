@@ -93,6 +93,8 @@ export const useStoredSet = (storageKey: string): StoredSet => {
 
 export const FAVORITES_KEY = 'jt:favorites';
 export const VISITED_KEY = 'jt:visited';
+export const BOOKED_KEY = 'jt:booked';
 
 export const useFavorites = (): StoredSet => useStoredSet(FAVORITES_KEY);
 export const useVisited = (): StoredSet => useStoredSet(VISITED_KEY);
+export const useBooked = (): StoredSet => useStoredSet(BOOKED_KEY);

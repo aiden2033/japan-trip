@@ -8,6 +8,7 @@ import Home from './pages/Home';
 import CityPage from './pages/CityPage';
 import PlaceDetail from './pages/PlaceDetail';
 import Passport from './pages/Passport';
+import Bookings from './pages/Bookings';
 
 export default function App() {
   return (
@@ -51,6 +52,7 @@ function Shell() {
         <Routes>
           <Route path="/" element={<Home onSearch={openSearch} />} />
           <Route path="/passport" element={<Passport />} />
+          <Route path="/bookings" element={<Bookings />} />
           <Route path="/:city" element={<CityPage />} />
           <Route path="/:city/:slug" element={<PlaceDetail />} />
         </Routes>

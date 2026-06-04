@@ -1,5 +1,6 @@
 import '../lib/leaflet-setup';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import type { CityId, Place } from '../data/types';
@@ -7,6 +8,7 @@ import type { LatLng } from '../lib/geo';
 import { haversineKm } from '../lib/geo';
 import { formatHours } from '../lib/tags';
 import { CITY_CENTER, placeIcon, userIcon } from '../lib/mapIcons';
+import { googleMapsMultiDir, MAX_GOOGLE_MAPS_ROUTE_POINTS } from '../lib/nav';
 import { placeKey, useVisited } from '../lib/useStoredSet';
 import PlaceImage from './PlaceImage';
 import PlaceToggles from './PlaceToggles';
@@ -21,6 +23,49 @@ interface CityMapProps {
 }
 
 const USER_BOUNDS_RADIUS_KM = 50;
+
+interface AccessibleMarkerProps {
+  children: ReactNode;
+  icon: L.Icon | L.DivIcon;
+  keyboard?: boolean;
+  label: string;
+  position: [number, number];
+  zIndexOffset?: number;
+}
+
+function AccessibleMarker({
+  children,
+  icon,
+  keyboard,
+  label,
+  position,
+  zIndexOffset,
+}: AccessibleMarkerProps) {
+  const markerRef = useRef<L.Marker>(null);
+
+  useEffect(() => {
+    const element = markerRef.current?.getElement();
+    if (!element) return;
+
+    element.setAttribute('aria-label', label);
+    element.setAttribute('title', label);
+    element.setAttribute('alt', label);
+  });
+
+  return (
+    <Marker
+      ref={markerRef}
+      position={position}
+      icon={icon}
+      keyboard={keyboard}
+      title={label}
+      alt={label}
+      zIndexOffset={zIndexOffset}
+    >
+      {children}
+    </Marker>
+  );
+}
 
 function FitBounds({ points, userPoint }: { points: Place[]; userPoint: LatLng | null }) {
   const map = useMap();
@@ -88,6 +133,19 @@ function TilesPlaceholder() {
   );
 }
 
+const markerLabel = (place: Place): string => {
+  const label = `${place.nameRu} (${place.nameEn})`;
+  return place.isDayTrip ? `${label}, выездной пункт` : label;
+};
+
+const routeLinkTitle = (totalPoints: number, routePoints: number): string => {
+  if (totalPoints === 1) return 'Открыть единственную видимую точку в Google Maps';
+  if (totalPoints > routePoints) {
+    return `Открыть маршрут по первым ${routePoints} из ${totalPoints} видимых точек в Google Maps`;
+  }
+  return `Открыть маршрут по ${routePoints} видимым точкам в Google Maps`;
+};
+
 export default function CityMap({ city, cityPlaces, dayTripPlaces, onOpen, userPosition }: CityMapProps) {
   const [tilesFailed, setTilesFailed] = useState(false);
   const visited = useVisited();
@@ -98,6 +156,15 @@ export default function CityMap({ city, cityPlaces, dayTripPlaces, onOpen, userP
     () => [...cityPts, ...dayTripPts],
     [cityPts, dayTripPts],
   );
+  const routePoints = useMemo(
+    () => visiblePoints.slice(0, MAX_GOOGLE_MAPS_ROUTE_POINTS),
+    [visiblePoints],
+  );
+  const routeHref = useMemo(
+    () => googleMapsMultiDir(routePoints.map((p) => p.coords!), 'walking'),
+    [routePoints],
+  );
+  const routeLabel = routeLinkTitle(visiblePoints.length, routePoints.length);
 
   const nearUser = useMemo(() => {
     if (!userPosition) return null;
@@ -132,30 +199,45 @@ export default function CityMap({ city, cityPlaces, dayTripPlaces, onOpen, userP
         />
         <FitBounds points={visiblePoints} userPoint={nearUser} />
         {nearUser && (
-          <Marker
+          <AccessibleMarker
             position={[nearUser.lat, nearUser.lng]}
             icon={userIcon()}
             zIndexOffset={1000}
+            label="Вы здесь"
             keyboard={false}
           >
             <Popup>
               <span className="text-xs font-semibold text-slate-700">📍 Вы здесь</span>
             </Popup>
-          </Marker>
+          </AccessibleMarker>
         )}
         {visiblePoints.map((p) => (
-          <Marker
+          <AccessibleMarker
             key={placeKey(p)}
             position={[p.coords!.lat, p.coords!.lng]}
             icon={placeIcon(city, Boolean(p.isDayTrip), visited.has(p))}
+            label={markerLabel(p)}
             keyboard
           >
             <Popup minWidth={208} maxWidth={224}>
               <MapPopupCard place={p} onOpen={onOpen} />
             </Popup>
-          </Marker>
+          </AccessibleMarker>
         ))}
       </MapContainer>
+
+      {routeHref && (
+        <a
+          href={routeHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={routeLabel}
+          title={routeLabel}
+          className="absolute bottom-3 left-3 z-[900] inline-flex min-h-[44px] max-w-[calc(100%-1.5rem)] items-center rounded-full bg-slate-900 px-4 text-sm font-semibold text-white shadow-lg hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+        >
+          Маршрут по точкам
+        </a>
+      )}
 
       {tilesFailed && <TilesPlaceholder />}
     </div>

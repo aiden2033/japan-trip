@@ -72,6 +72,17 @@ export default function Home({ onSearch }: HomeProps) {
         Найти место по всем городам…
       </button>
 
+      <Link
+        to="/bookings"
+        className="flex min-h-[44px] items-center justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm shadow-sm transition hover:bg-amber-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+      >
+        <span>
+          <span className="font-bold text-amber-950">🎫 Брони и билеты</span>
+          <span className="ml-2 text-amber-800">что купить заранее</span>
+        </span>
+        <span aria-hidden="true" className="shrink-0 text-amber-700">→</span>
+      </Link>
+
       {favoritePlaces.length > 0 && (
         <section className="flex flex-col gap-2">
           <h2 className="text-sm font-bold uppercase tracking-wide text-slate-500">

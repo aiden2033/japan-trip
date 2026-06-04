@@ -2,11 +2,20 @@
 
 ## What this is
 
-A small, fast, offline-friendly single-page guide for one specific trip across Japan. It groups every place worth visiting by city, shows compact tags, time estimates and "best time to go" hints, marks day-trips and which of them cannot be combined on the same day, and offers a fuzzy search that works in both English and Russian. There are **no runtime API calls** and **no `localStorage` dependency** — all data is bundled at build time, so it loads instantly and works as a static site.
+A small, fast, offline-friendly single-page guide for one specific trip across Japan. It groups every place worth visiting by city, shows compact tags, time estimates and "best time to go" hints, marks day-trips and which of them cannot be combined on the same day, and offers a fuzzy search that works in both English and Russian. There are **no runtime API calls** — all content data is bundled at build time, so it loads instantly and works as a static site. User marks are saved in `localStorage` when available, with an in-memory fallback when storage is unavailable.
 
-Небольшой быстрый офлайн-гид по конкретной поездке: места сгруппированы по городам, компактные теги, оценки времени, подсказки "когда идти", пометки дейтрипов и нечёткий поиск на русском и английском. Никаких сетевых запросов и зависимости от `localStorage`.
+Небольшой быстрый офлайн-гид по конкретной поездке: места сгруппированы по городам, компактные теги, оценки времени, подсказки "когда идти", пометки дейтрипов и нечёткий поиск на русском и английском. Контент статический и не требует API: данные собраны в бандл при сборке. Пользовательские отметки сохраняются в `localStorage`, если он доступен, с fallback в память при недоступном хранилище.
 
 **Route / Маршрут:** `Osaka → Kyoto → Tokyo`
+
+## User states / Пользовательские состояния
+
+- **Favorites / Избранное** — places can be marked for quick access from the home page.
+- **Visited / Посещено** — visited places are tracked across city pages, maps and progress counters.
+- **Passport / Паспорт** — the passport page shows collected city stamps based on visited places.
+- **Booked / Забронировано** — the booking checklist tracks which advance tickets and restaurant reservations are done.
+
+These states are local to the browser. They use `localStorage` for persistence and fall back to in-memory state if browser storage is unavailable or blocked.
 
 ## Run locally / Локальный запуск
 
@@ -66,6 +75,12 @@ Field notes:
 - **`anime`** — optional list of anime connected to the place (e.g. `['Евангелион (Neon Genesis Evangelion)']`). Rendered as a "🎬 Аниме, связанные с этим местом" block when a card is expanded; add the `anime` tag too so the place is filterable.
 
 After editing, run `npm run build` to confirm types are still valid.
+
+## Edit booking checklist / Редактировать брони
+
+Advance tickets and restaurant reservations live in **`src/data/bookings.ts`**. Each item points to a place by `{ city, placeSlug }`, carries a short timing note, and lists one or more purchase/reservation links. The `/bookings` page renders the checklist and stores completed booking marks in `localStorage` under `jt:booked`.
+
+Keep official links first, then add known partner platforms such as Klook, Trip.com, Lawson, TableCheck, OMAKASE, My Concierge or TABLEALL when they are useful. Because booking systems change often, re-check URLs before committing major trip updates.
 
 ## Add real photos / Добавить настоящие фото
 
