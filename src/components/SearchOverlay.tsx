@@ -12,7 +12,7 @@ interface SearchOverlayProps {
   onSelect: (place: Place) => void;
 }
 
-const CITY_SHORTCUTS: CityId[] = ['osaka', 'kyoto', 'tokyo'];
+const CITY_SHORTCUTS: CityId[] = ['osaka', 'kyoto', 'tokyo', 'other'];
 const POPULAR_TAGS: Tag[] = ['food', 'temple-shrine', 'view', 'walk', 'anime', 'castle'];
 
 export default function SearchOverlay({ query, onQueryChange, onClose, onSelect }: SearchOverlayProps) {

@@ -3,11 +3,12 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 import L from 'leaflet';
+import type { FriendsMapPlace } from '../data/friendsMapPlaces';
 import type { CityId, Place } from '../data/types';
 import type { LatLng } from '../lib/geo';
 import { haversineKm } from '../lib/geo';
 import { formatHours } from '../lib/tags';
-import { CITY_CENTER, placeIcon, userIcon } from '../lib/mapIcons';
+import { CITY_CENTER, friendsPlaceIcon, placeIcon, userIcon } from '../lib/mapIcons';
 import { googleMapsMultiDir, MAX_GOOGLE_MAPS_ROUTE_POINTS } from '../lib/nav';
 import { placeKey, useVisited } from '../lib/useStoredSet';
 import PlaceImage from './PlaceImage';
@@ -18,11 +19,14 @@ interface CityMapProps {
   city: CityId;
   cityPlaces: Place[];
   dayTripPlaces: Place[];
+  friendsPlaces?: FriendsMapPlace[];
+  showFriendsPlaces?: boolean;
   onOpen: (slug: string) => void;
   userPosition?: LatLng | null;
 }
 
 const USER_BOUNDS_RADIUS_KM = 50;
+const FRIENDS_DEDUPE_RADIUS_KM = 0.075;
 
 interface AccessibleMarkerProps {
   children: ReactNode;
@@ -67,11 +71,17 @@ function AccessibleMarker({
   );
 }
 
-function FitBounds({ points, userPoint }: { points: Place[]; userPoint: LatLng | null }) {
+function FriendsFitBounds({
+  points,
+  userPoint,
+}: {
+  points: Array<{ id?: string; slug?: string; coords?: LatLng }>;
+  userPoint: LatLng | null;
+}) {
   const map = useMap();
   const key = points
     .filter((p) => p.coords)
-    .map((p) => placeKey(p))
+    .map((p) => p.id ?? p.slug ?? `${p.coords!.lat},${p.coords!.lng}`)
     .sort()
     .join(',');
   const userKey = userPoint ? `${userPoint.lat.toFixed(3)},${userPoint.lng.toFixed(3)}` : '';
@@ -87,8 +97,7 @@ function FitBounds({ points, userPoint }: { points: Place[]; userPoint: LatLng |
       return;
     }
     map.fitBounds(L.latLngBounds(coords), { padding: [48, 48], maxZoom: 14 });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key, userKey, map]);
+  }, [key, userKey, map, points, userPoint]);
 
   return null;
 }
@@ -123,6 +132,32 @@ function MapPopupCard({ place, onOpen }: { place: Place; onOpen: (slug: string) 
   );
 }
 
+function FriendsPopupCard({ place }: { place: FriendsMapPlace }) {
+  const query = encodeURIComponent(`${place.coords.lat},${place.coords.lng}`);
+  const mapsHref = `https://www.google.com/maps/search/?api=1&query=${query}`;
+
+  return (
+    <div className="w-52 text-left">
+      <div className="inline-flex rounded-full bg-emerald-50 px-2 py-1 text-[11px] font-bold text-emerald-700">
+        Google Maps список
+      </div>
+      <h3 className="mt-2 text-sm font-bold text-slate-900">{place.name}</h3>
+      {place.note && <p className="mt-1 text-xs text-slate-600">{place.note}</p>}
+      {place.isDayTrip && (
+        <p className="mt-1 text-xs font-semibold text-amber-700">Выездная точка</p>
+      )}
+      <a
+        href={mapsHref}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-3 inline-flex min-h-[44px] w-full items-center justify-center rounded-lg bg-emerald-700 px-3 text-xs font-semibold text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+      >
+        Открыть в Google Maps
+      </a>
+    </div>
+  );
+}
+
 function TilesPlaceholder() {
   return (
     <div className="pointer-events-none absolute inset-x-0 top-0 z-[900] flex justify-center p-2">
@@ -146,7 +181,15 @@ const routeLinkTitle = (totalPoints: number, routePoints: number): string => {
   return `Открыть маршрут по ${routePoints} видимым точкам в Google Maps`;
 };
 
-export default function CityMap({ city, cityPlaces, dayTripPlaces, onOpen, userPosition }: CityMapProps) {
+export default function CityMap({
+  city,
+  cityPlaces,
+  dayTripPlaces,
+  friendsPlaces = [],
+  showFriendsPlaces = false,
+  onOpen,
+  userPosition,
+}: CityMapProps) {
   const [tilesFailed, setTilesFailed] = useState(false);
   const visited = useVisited();
 
@@ -155,6 +198,21 @@ export default function CityMap({ city, cityPlaces, dayTripPlaces, onOpen, userP
   const visiblePoints = useMemo(
     () => [...cityPts, ...dayTripPts],
     [cityPts, dayTripPts],
+  );
+  const friendsVisiblePoints = useMemo(() => {
+    if (!showFriendsPlaces) return [];
+    return friendsPlaces.filter(
+      (friendPlace) =>
+        !visiblePoints.some(
+          (place) =>
+            place.coords &&
+            haversineKm(friendPlace.coords, place.coords) <= FRIENDS_DEDUPE_RADIUS_KM,
+        ),
+    );
+  }, [friendsPlaces, showFriendsPlaces, visiblePoints]);
+  const mapFitPoints = useMemo(
+    () => [...visiblePoints, ...friendsVisiblePoints],
+    [friendsVisiblePoints, visiblePoints],
   );
   const routePoints = useMemo(
     () => visiblePoints.slice(0, MAX_GOOGLE_MAPS_ROUTE_POINTS),
@@ -172,7 +230,7 @@ export default function CityMap({ city, cityPlaces, dayTripPlaces, onOpen, userP
     return haversineKm(userPosition, { lat, lng }) <= USER_BOUNDS_RADIUS_KM ? userPosition : null;
   }, [userPosition, city]);
 
-  if (visiblePoints.length === 0) {
+  if (mapFitPoints.length === 0) {
     return (
       <div className="flex h-[60vh] min-h-[360px] w-full items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 px-4 text-center text-sm text-slate-500">
         Ни у одного места под выбранный фильтр нет точки на карте.
@@ -197,7 +255,7 @@ export default function CityMap({ city, cityPlaces, dayTripPlaces, onOpen, userP
             tileload: () => setTilesFailed(false),
           }}
         />
-        <FitBounds points={visiblePoints} userPoint={nearUser} />
+        <FriendsFitBounds points={mapFitPoints} userPoint={nearUser} />
         {nearUser && (
           <AccessibleMarker
             position={[nearUser.lat, nearUser.lng]}
@@ -221,6 +279,19 @@ export default function CityMap({ city, cityPlaces, dayTripPlaces, onOpen, userP
           >
             <Popup minWidth={208} maxWidth={224}>
               <MapPopupCard place={p} onOpen={onOpen} />
+            </Popup>
+          </AccessibleMarker>
+        ))}
+        {friendsVisiblePoints.map((p) => (
+          <AccessibleMarker
+            key={p.id}
+            position={[p.coords.lat, p.coords.lng]}
+            icon={friendsPlaceIcon()}
+            label={`${p.name}, точка из Google Maps списка`}
+            keyboard
+          >
+            <Popup minWidth={208} maxWidth={224}>
+              <FriendsPopupCard place={p} />
             </Popup>
           </AccessibleMarker>
         ))}

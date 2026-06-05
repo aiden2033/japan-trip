@@ -9,7 +9,7 @@ interface HeaderProps {
   onSearchFocus: () => void;
 }
 
-const CITY_TABS: CityId[] = ['osaka', 'kyoto', 'tokyo'];
+const CITY_TABS: CityId[] = ['osaka', 'kyoto', 'tokyo', 'other'];
 
 export default function Header({ query, onQueryChange, onSearchFocus }: HeaderProps) {
   return (

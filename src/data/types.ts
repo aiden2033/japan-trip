@@ -3,7 +3,7 @@ export type Tag =
   | 'shopping' | 'nightlife' | 'museum' | 'walk' | 'day-trip'
   | 'castle' | 'tickets-ahead' | 'low-mobility' | 'cafe' | 'anime';
 
-export type CityId = 'osaka' | 'kyoto' | 'tokyo';
+export type CityId = 'osaka' | 'kyoto' | 'tokyo' | 'other';
 
 export interface Place {
   slug: string;

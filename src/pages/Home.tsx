@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { trip } from '../data/trip';
 import { cities } from '../data/cities';
+import { friendsMapPlaces } from '../data/friendsMapPlaces';
 import { places } from '../data/places';
 import type { CityId } from '../data/types';
 import { CITY_ACCENT } from '../lib/tags';
@@ -117,11 +118,12 @@ export default function Home({ onSearch }: HomeProps) {
 
       <section className="flex flex-col gap-2">
         <h2 className="text-sm font-bold uppercase tracking-wide text-slate-500">Города</h2>
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
           {cities.map((city) => {
             const accent = CITY_ACCENT[city.id];
             const cityPlaces = places.filter((p) => p.city === city.id);
             const visitedCount = cityPlaces.filter((p) => visited.items.has(placeKey(p))).length;
+            const friendsCount = friendsMapPlaces.filter((p) => p.city === city.id).length;
             return (
               <Link
                 key={city.id}
@@ -134,7 +136,9 @@ export default function Home({ onSearch }: HomeProps) {
                   {city.nameEn}
                 </span>
                 <span className="text-xs font-semibold opacity-90">
-                  {visitedCount}/{cityPlaces.length} пройдено
+                  {cityPlaces.length > 0
+                    ? `${visitedCount}/${cityPlaces.length} пройдено`
+                    : `${friendsCount} Google-точек`}
                 </span>
               </Link>
             );

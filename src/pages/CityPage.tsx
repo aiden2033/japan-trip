@@ -1,7 +1,8 @@
-import { lazy, Suspense, useCallback, useMemo, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import type { CityId, Place, Tag } from '../data/types';
 import { cities } from '../data/cities';
+import { friendsMapPlaces } from '../data/friendsMapPlaces';
 import { places } from '../data/places';
 import { dayTripGroups } from '../data/trip';
 import { animeRoutesByCity } from '../data/animeRoutes';
@@ -16,7 +17,7 @@ import TagChip from '../components/TagChip';
 const CityMap = lazy(() => import('../components/CityMap'));
 const AnimeRoutes = lazy(() => import('../components/AnimeRoutes'));
 
-const CITY_IDS: CityId[] = ['osaka', 'kyoto', 'tokyo'];
+const CITY_IDS: CityId[] = ['osaka', 'kyoto', 'tokyo', 'other'];
 
 const isCityId = (value: string | undefined): value is CityId =>
   Boolean(value) && CITY_IDS.includes(value as CityId);
@@ -27,6 +28,7 @@ export default function CityPage() {
   const [activeTags, setActiveTags] = useState<Tag[]>([]);
   const [view, setView] = useState<'list' | 'map' | 'anime'>('list');
   const [sortByDistance, setSortByDistance] = useState(false);
+  const [showFriendsMapPlaces, setShowFriendsMapPlaces] = useState(false);
   const visited = useVisited();
   const visitedItems = visited.items;
   const geo = useGeolocation();
@@ -77,10 +79,24 @@ export default function CityPage() {
 
   const mapCityPlaces = useMemo(() => [...mainPlaces, ...cafePlaces], [mainPlaces, cafePlaces]);
 
+  const cityFriendsMapPlaces = useMemo(
+    () => (isCityId(city) ? friendsMapPlaces.filter((p) => p.city === city) : []),
+    [city],
+  );
+
   const animeRoutes = useMemo(
     () => (isCityId(city) ? animeRoutesByCity[city] : []),
     [city],
   );
+
+  useEffect(() => {
+    if (cityMeta?.id === 'other') {
+      setView('map');
+      setShowFriendsMapPlaces(true);
+    } else {
+      setShowFriendsMapPlaces(false);
+    }
+  }, [cityMeta?.id]);
 
   if (!cityMeta) {
     return <Navigate to="/" replace />;
@@ -197,6 +213,24 @@ export default function CityPage() {
             {geo.status === 'locating' ? '📍 Определяю…' : '📍 Рядом со мной'}
           </button>
         )}
+
+        {view === 'map' && cityFriendsMapPlaces.length > 0 && (
+          <label
+            className={`inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-full px-4 text-sm font-semibold transition focus-within:ring-2 focus-within:ring-emerald-400 ${
+              showFriendsMapPlaces
+                ? 'bg-emerald-600 text-white shadow'
+                : 'bg-slate-100 text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            <input
+              type="checkbox"
+              checked={showFriendsMapPlaces}
+              onChange={(event) => setShowFriendsMapPlaces(event.target.checked)}
+              className="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-400"
+            />
+            <span>Google точки · {cityFriendsMapPlaces.length}</span>
+          </label>
+        )}
       </div>
 
       {view === 'anime' ? (
@@ -218,6 +252,8 @@ export default function CityPage() {
             city={cityMeta.id}
             cityPlaces={mapCityPlaces}
             dayTripPlaces={dayTripPlaces}
+            friendsPlaces={cityFriendsMapPlaces}
+            showFriendsPlaces={showFriendsMapPlaces}
             onOpen={openPlace}
             userPosition={position}
           />

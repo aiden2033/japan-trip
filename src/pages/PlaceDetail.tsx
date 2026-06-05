@@ -15,7 +15,7 @@ import IncompatibleNote from '../components/IncompatibleNote';
 import NavHandoff from '../components/NavHandoff';
 import BookingActions from '../components/BookingActions';
 
-const CITY_IDS: CityId[] = ['osaka', 'kyoto', 'tokyo'];
+const CITY_IDS: CityId[] = ['osaka', 'kyoto', 'tokyo', 'other'];
 
 const isCityId = (value: string | undefined): value is CityId =>
   Boolean(value) && CITY_IDS.includes(value as CityId);

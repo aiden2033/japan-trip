@@ -4,11 +4,14 @@ import { CITY_ACCENT } from './tags';
 
 const DAYTRIP_COLOR = '#d97706';
 const DAYTRIP_BORDER = '#b45309';
+const FRIENDS_COLOR = '#10b981';
+const FRIENDS_BORDER = '#047857';
 
 export const CITY_CENTER: Record<CityId, [number, number]> = {
   osaka: [34.6687, 135.5013],
   kyoto: [35.0116, 135.7681],
   tokyo: [35.6762, 139.6503],
+  other: [35.2, 136.9],
 };
 
 const pinHtml = (fill: string, border: string, dimmed: boolean) =>
@@ -38,4 +41,13 @@ export const userIcon = (): L.DivIcon =>
     iconSize: [18, 18],
     iconAnchor: [9, 9],
     popupAnchor: [0, -10],
+  });
+
+export const friendsPlaceIcon = (): L.DivIcon =>
+  L.divIcon({
+    className: 'city-pin-wrapper',
+    html: pinHtml(FRIENDS_COLOR, FRIENDS_BORDER, false),
+    iconSize: [22, 22],
+    iconAnchor: [11, 22],
+    popupAnchor: [0, -22],
   });

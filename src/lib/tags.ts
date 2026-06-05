@@ -29,6 +29,7 @@ export const CITY_ACCENT: Record<CityId, CityAccent> = {
   osaka: { bg: '#e11d48', text: '#ffffff', border: '#be123c', name: 'Осака' },
   kyoto: { bg: '#7c3aed', text: '#ffffff', border: '#6d28d9', name: 'Киото' },
   tokyo: { bg: '#2563eb', text: '#ffffff', border: '#1d4ed8', name: 'Токио' },
+  other: { bg: '#475569', text: '#ffffff', border: '#334155', name: 'Другое' },
 };
 
 export const mapsUrl = (query: string): string =>

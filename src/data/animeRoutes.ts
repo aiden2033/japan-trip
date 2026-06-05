@@ -377,4 +377,5 @@ export const animeRoutesByCity: Record<CityId, AnimeRoute[]> = {
         'Кавагутико ~2 ч от Токио (автобус/поезд); Оиси-парк на северном берегу озера, лучший ракурс на гору.',
     },
   ],
+  other: [],
 };
