@@ -225,15 +225,22 @@ export default function CityMap({
     () => [...visiblePoints, ...friendsVisiblePoints],
     [friendsVisiblePoints, visiblePoints],
   );
+  const routeCoords = useMemo(
+    () => [
+      ...visiblePoints.map((point) => point.coords!),
+      ...friendsVisiblePoints.map((point) => point.coords),
+    ],
+    [friendsVisiblePoints, visiblePoints],
+  );
   const routePoints = useMemo(
-    () => visiblePoints.slice(0, MAX_GOOGLE_MAPS_ROUTE_POINTS),
-    [visiblePoints],
+    () => routeCoords.slice(0, MAX_GOOGLE_MAPS_ROUTE_POINTS),
+    [routeCoords],
   );
   const routeHref = useMemo(
-    () => googleMapsMultiDir(routePoints.map((p) => p.coords!), 'walking'),
+    () => googleMapsMultiDir(routePoints, 'walking'),
     [routePoints],
   );
-  const routeLabel = routeLinkTitle(visiblePoints.length, routePoints.length);
+  const routeLabel = routeLinkTitle(routeCoords.length, routePoints.length);
 
   const nearUser = useMemo(() => {
     if (!userPosition) return null;

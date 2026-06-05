@@ -20,37 +20,50 @@ const fuse = new Fuse(places, {
 });
 
 const SYNONYM_TAGS: Record<string, Tag> = {
+  еда: 'food',
+  еду: 'food',
+  ресторан: 'food',
+  рестораны: 'food',
   закат: 'view',
   панорама: 'view',
   смотровая: 'view',
+  вид: 'view',
+  виды: 'view',
+  кафе: 'cafe',
+  кофе: 'cafe',
   маття: 'cafe',
   латте: 'cafe',
   кофейня: 'cafe',
+  кофейни: 'cafe',
   такояки: 'food',
   рамен: 'food',
   окономияки: 'food',
   гастро: 'food',
   утро: 'morning',
   рассвет: 'morning',
+  храм: 'temple-shrine',
+  храмы: 'temple-shrine',
   тории: 'temple-shrine',
   святилище: 'temple-shrine',
+  святилища: 'temple-shrine',
   замок: 'castle',
+  замки: 'castle',
   аниме: 'anime',
   паломничество: 'anime',
 };
+
+const KNOWN_TAGS = new Set<Tag>(places.flatMap((place) => place.tags));
 
 export const searchPlaces = (query: string): Place[] => {
   const trimmed = query.trim();
   if (trimmed.length === 0) {
     return [];
   }
+  const normalized = trimmed.toLowerCase();
+  const directTag = SYNONYM_TAGS[normalized] ?? (KNOWN_TAGS.has(normalized as Tag) ? (normalized as Tag) : undefined);
+  if (directTag) {
+    return places.filter((place) => place.tags.includes(directTag));
+  }
   const results = fuse.search(trimmed).map((result) => result.item);
-  if (results.length > 0) {
-    return results;
-  }
-  const tag = SYNONYM_TAGS[trimmed.toLowerCase()];
-  if (tag) {
-    return places.filter((place) => place.tags.includes(tag));
-  }
   return results;
 };

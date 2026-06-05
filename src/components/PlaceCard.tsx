@@ -40,6 +40,7 @@ export default function PlaceCard({ place, places, onOpen, distanceKm }: PlaceCa
       tabIndex={0}
       onClick={() => onOpen(place.slug)}
       onKeyDown={(e) => {
+        if (e.target !== e.currentTarget) return;
         if (e.key === 'Enter' || e.key === ' ') {
           if (e.key === ' ') e.preventDefault();
           onOpen(place.slug);

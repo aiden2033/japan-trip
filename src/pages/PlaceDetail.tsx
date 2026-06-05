@@ -54,6 +54,7 @@ export default function PlaceDetail() {
         sameCity: place.city,
         excludeSlug: place.slug,
         limit: 4,
+        maxKm: 3,
       })
     : [];
 

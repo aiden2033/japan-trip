@@ -15,6 +15,7 @@ const TABS: TabDef[] = [
   { to: '/osaka', label: 'Осака', icon: '🏯' },
   { to: '/kyoto', label: 'Киото', icon: '⛩️' },
   { to: '/tokyo', label: 'Токио', icon: '🌆' },
+  { to: '/other', label: 'Другое', icon: '📍' },
 ];
 
 export default function BottomTabBar({ onSearch }: BottomTabBarProps) {
