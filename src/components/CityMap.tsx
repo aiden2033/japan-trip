@@ -102,6 +102,17 @@ function FriendsFitBounds({
   return null;
 }
 
+function EnableMapGestures() {
+  const map = useMap();
+
+  useEffect(() => {
+    map.scrollWheelZoom.enable();
+    map.touchZoom.enable();
+  }, [map]);
+
+  return null;
+}
+
 function MapPopupCard({ place, onOpen }: { place: Place; onOpen: (slug: string) => void }) {
   return (
     <div className="w-52 text-left">
@@ -243,10 +254,12 @@ export default function CityMap({
       <MapContainer
         center={CITY_CENTER[city]}
         zoom={13}
-        scrollWheelZoom={false}
+        scrollWheelZoom
+        touchZoom
         className="h-full w-full"
         style={{ background: '#e2e8f0' }}
       >
+        <EnableMapGestures />
         <TileLayer
           attribution="&copy; OpenStreetMap"
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
