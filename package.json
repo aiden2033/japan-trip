@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "sync:google-points": "node scripts/sync-google-map-points.mjs",
     "build": "tsc -b && vite build",
     "preview": "vite preview"
   },
