@@ -161,7 +161,7 @@ function FriendsPopupCard({ place }: { place: FriendsMapPlace }) {
         href={mapsHref}
         target="_blank"
         rel="noopener noreferrer"
-        className="mt-3 inline-flex min-h-[44px] w-full items-center justify-center rounded-lg bg-emerald-700 px-3 text-xs font-semibold text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+        className="mt-3 inline-flex min-h-[44px] w-full items-center justify-center rounded-lg bg-emerald-700 px-3 text-xs font-semibold !text-white hover:!text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
       >
         Открыть в Google Maps
       </a>
@@ -250,7 +250,7 @@ export default function CityMap({
   }
 
   return (
-    <div className="relative h-[60vh] min-h-[360px] w-full overflow-hidden rounded-2xl border border-slate-200 shadow-sm">
+    <div className="relative isolate z-0 h-[60vh] min-h-[360px] w-full overflow-hidden rounded-2xl border border-slate-200 shadow-sm">
       <MapContainer
         center={CITY_CENTER[city]}
         zoom={13}

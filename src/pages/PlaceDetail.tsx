@@ -58,13 +58,25 @@ export default function PlaceDetail() {
     : [];
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-4 px-3 py-4">
+    <div className="mx-auto flex max-w-3xl flex-col gap-4 px-3 pb-32 pt-4 md:pb-4">
       <button
         type="button"
         onClick={goBack}
         className="inline-flex min-h-[44px] w-fit items-center gap-1 rounded-full px-3 text-sm font-semibold text-slate-600 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
       >
         ← Назад в {cityMeta.nameRu}
+      </button>
+      <button
+        type="button"
+        onClick={goBack}
+        aria-label={`Назад в ${cityMeta.nameRu}`}
+        title={`Назад в ${cityMeta.nameRu}`}
+        className="fixed bottom-[calc(4.75rem+env(safe-area-inset-bottom))] left-3 z-30 inline-flex min-h-[44px] items-center gap-1.5 rounded-full border border-slate-200 bg-white/95 px-3 text-sm font-semibold text-slate-800 shadow-lg shadow-slate-900/15 backdrop-blur md:hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+      >
+        <span aria-hidden="true" className="text-lg leading-none">
+          ←
+        </span>
+        <span>Назад</span>
       </button>
 
       <div className="overflow-hidden rounded-2xl border border-slate-200 shadow-sm">
