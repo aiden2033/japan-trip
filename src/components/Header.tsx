@@ -1,6 +1,7 @@
 import { NavLink, Link } from 'react-router-dom';
 import type { CityId } from '../data/types';
 import { CITY_ACCENT } from '../lib/tags';
+import MoreMenu from './MoreMenu';
 
 interface HeaderProps {
   query: string;
@@ -57,24 +58,6 @@ export default function Header({ query, onQueryChange, onSearchFocus }: HeaderPr
           ))}
 
           <NavLink
-            to="/bookings"
-            end
-            className="shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
-          >
-            {({ isActive }) => (
-              <span
-                className={`inline-flex min-h-[44px] items-center whitespace-nowrap rounded-full px-4 text-sm font-semibold transition-colors ${
-                  isActive
-                    ? 'bg-amber-100 text-amber-900'
-                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                }`}
-              >
-                🎫 Брони
-              </span>
-            )}
-          </NavLink>
-
-          <NavLink
             to="/passport"
             end
             aria-label="Книжка странника"
@@ -93,6 +76,8 @@ export default function Header({ query, onQueryChange, onSearchFocus }: HeaderPr
               </span>
             )}
           </NavLink>
+
+          <MoreMenu onSearch={onSearchFocus} />
         </nav>
       </div>
     </header>

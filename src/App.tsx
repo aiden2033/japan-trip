@@ -9,6 +9,10 @@ import CityPage from './pages/CityPage';
 import PlaceDetail from './pages/PlaceDetail';
 import Passport from './pages/Passport';
 import Bookings from './pages/Bookings';
+import Preflight from './pages/Preflight';
+import Trust from './pages/Trust';
+import Emergency from './pages/Emergency';
+import IcCards from './pages/IcCards';
 
 export default function App() {
   return (
@@ -53,6 +57,10 @@ function Shell() {
           <Route path="/" element={<Home onSearch={openSearch} />} />
           <Route path="/passport" element={<Passport />} />
           <Route path="/bookings" element={<Bookings />} />
+          <Route path="/preflight" element={<Preflight />} />
+          <Route path="/trust" element={<Trust />} />
+          <Route path="/emergency" element={<Emergency />} />
+          <Route path="/ic-cards" element={<IcCards />} />
           <Route path="/:city" element={<CityPage />} />
           <Route path="/:city/:slug" element={<PlaceDetail />} />
         </Routes>

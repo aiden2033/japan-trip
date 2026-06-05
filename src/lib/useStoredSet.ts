@@ -72,6 +72,41 @@ export interface StoredSet {
   toggle: (place: Pick<Place, 'city' | 'slug'>) => void;
 }
 
+export interface StoredKeySet {
+  items: Set<string>;
+  count: number;
+  hasKey: (key: string) => boolean;
+  toggleKey: (key: string) => void;
+  clear: () => void;
+}
+
+const clearKeys = (storageKey: string): void => {
+  const store = getStore(storageKey);
+  store.snapshot = new Set();
+  persist(storageKey, store.snapshot);
+  emit(store);
+};
+
+export const useStoredKeySet = (storageKey: string): StoredKeySet => {
+  const store = getStore(storageKey);
+  const items = useSyncExternalStore(
+    (listener) => {
+      store.listeners.add(listener);
+      return () => store.listeners.delete(listener);
+    },
+    () => store.snapshot,
+    () => store.snapshot,
+  );
+
+  return {
+    items,
+    count: items.size,
+    hasKey: (key) => items.has(key),
+    toggleKey: (key) => toggleKey(storageKey, key),
+    clear: () => clearKeys(storageKey),
+  };
+};
+
 export const useStoredSet = (storageKey: string): StoredSet => {
   const store = getStore(storageKey);
   const items = useSyncExternalStore(
@@ -94,7 +129,9 @@ export const useStoredSet = (storageKey: string): StoredSet => {
 export const FAVORITES_KEY = 'jt:favorites';
 export const VISITED_KEY = 'jt:visited';
 export const BOOKED_KEY = 'jt:booked';
+export const PREFLIGHT_KEY = 'jt:preflight';
 
 export const useFavorites = (): StoredSet => useStoredSet(FAVORITES_KEY);
 export const useVisited = (): StoredSet => useStoredSet(VISITED_KEY);
 export const useBooked = (): StoredSet => useStoredSet(BOOKED_KEY);
+export const usePreflight = (): StoredKeySet => useStoredKeySet(PREFLIGHT_KEY);

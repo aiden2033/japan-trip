@@ -49,6 +49,24 @@ export interface BookingItem {
   checkedAt: string;
 }
 
+export type TrustSourceKind = 'official' | 'government' | 'operator' | 'guide';
+
+export interface TrustSource {
+  label: string;
+  url: string;
+  kind: TrustSourceKind;
+}
+
+export interface TrustTopic {
+  title: string;
+  category: string;
+  checkedAt: string;
+  risk: string;
+  whatCanChange: string;
+  summary: string;
+  links: TrustSource[];
+}
+
 export interface StayArea { area: string; why: string; }
 
 export interface CityMeta {
