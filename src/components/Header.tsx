@@ -13,7 +13,7 @@ const CITY_TABS: CityId[] = ['osaka', 'kyoto', 'tokyo'];
 
 export default function Header({ query, onQueryChange, onSearchFocus }: HeaderProps) {
   return (
-    <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
+    <header className="sticky top-0 z-30 border-b border-slate-200 bg-white">
       <div className="mx-auto flex max-w-5xl flex-col gap-2 px-3 py-2">
         <div className="flex items-center gap-3">
           <Link

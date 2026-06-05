@@ -33,16 +33,16 @@ const MORE_LINKS: MoreLink[] = [
     description: 'Источники, даты проверки и что может устареть.',
   },
   {
-    to: '/emergency',
-    icon: '🚨',
-    title: 'SOS',
-    description: 'Номера, фразы и сценарии на случай проблем.',
-  },
-  {
     to: '/ic-cards',
     icon: '💳',
     title: 'IC-карта',
     description: 'Suica, PASMO, ICOCA и mobile-варианты.',
+  },
+  {
+    to: '/emergency',
+    icon: '🚨',
+    title: 'SOS',
+    description: 'Номера, фразы и сценарии на случай проблем.',
   },
 ];
 
@@ -82,7 +82,7 @@ export default function MoreMenu({ onSearch, variant = 'header' }: MoreMenuProps
           role="dialog"
           aria-modal="true"
           aria-label="Дополнительные разделы"
-          className="fixed inset-0 z-50 bg-slate-950/30 backdrop-blur-sm"
+          className="fixed inset-0 z-50 bg-slate-950/15"
           onClick={close}
         >
           <div
