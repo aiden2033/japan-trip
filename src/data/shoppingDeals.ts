@@ -9,6 +9,8 @@ export type ShoppingCategory =
   | 'outdoor'
   | 'services';
 
+export type DealTag = 'gift' | 'compact' | 'voltage' | 'taxfree';
+
 export interface ShoppingCategoryMeta {
   id: ShoppingCategory;
   icon: string;
@@ -25,6 +27,10 @@ export interface ShoppingDeal {
   japanPrice: string;
   worldPrice: string;
   savings: string;
+  savingsPercent: number;
+  reason: string;
+  tags: DealTag[];
+  bestPlaces: string[];
   description: string;
   note?: string;
   buyIn: {
@@ -95,6 +101,10 @@ export const shoppingDeals: ShoppingDeal[] = [
     japanPrice: 'около ¥4,950',
     worldPrice: 'около 24,900 ₽ за импорт',
     savings: 'до 90%',
+    savingsPercent: 90,
+    reason: 'Нишевый парфюм в РФ — с огромной импортной наценкой',
+    tags: ['compact', 'gift'],
+    bestPlaces: ['Токио · Isetan Shinjuku', 'Осака · Umeda Hankyu / Hanshin'],
     description:
       'Японская нишевая парфюмерия в РФ продается с огромной наценкой. В Японии это компактная покупка на один вечерний заход в универмаг.',
     note: '50 мл можно в ручную кладь в прозрачном пакете для жидкостей.',
@@ -114,6 +124,10 @@ export const shoppingDeals: ShoppingDeal[] = [
     japanPrice: 'около ¥1,320-1,540',
     worldPrice: 'около 4,500-5,500 ₽',
     savings: 'до 85%',
+    savingsPercent: 85,
+    reason: 'Тушь, тинты и помады — как обычная косметика, не импорт',
+    tags: ['compact', 'gift'],
+    bestPlaces: ['Осака · Don Quijote Dotonbori', 'Токио · @cosme Tokyo'],
     description:
       'Самая простая категория для закупки подарков: тушь, тинты и помады стоят в Японии как обычная косметика, а не редкий импорт.',
     note: 'Популярные оттенки Lip Monster быстро разбирают; сверяй номер оттенка и тип туши.',
@@ -133,6 +147,10 @@ export const shoppingDeals: ShoppingDeal[] = [
     japanPrice: 'около ¥700-1,630',
     worldPrice: 'около 1,600-3,400 ₽',
     savings: '60-80%',
+    savingsPercent: 80,
+    reason: 'Санскрины и витамин C дёшевы, добивают чек до tax-free',
+    tags: ['compact', 'gift', 'taxfree'],
+    bestPlaces: ['Осака · Matsukiyo Shinsaibashi', 'Токио · Matsukiyo Shinjuku'],
     description:
       'Санскрины, гидрофильное масло и витамин C дают высокий процент экономии и хорошо добивают чек до tax-free.',
     note: 'Флаконы больше 100 мл клади в багаж. У санскринов много региональных формул и старых версий.',
@@ -152,6 +170,10 @@ export const shoppingDeals: ShoppingDeal[] = [
     japanPrice: 'около ¥439-1,039',
     worldPrice: 'около 1,500-3,600 ₽',
     savings: '65-85%',
+    savingsPercent: 85,
+    reason: 'БАДы, пластыри и капли для линз — дешевле в разы',
+    tags: ['compact', 'gift'],
+    bestPlaces: ['Осака · Matsukiyo Shinsaibashi', 'Токио · Welcia Shinjuku'],
     description:
       'Простые БАДы, пластыри и капли для линз часто дешевле в разы. Это компактные товары с понятной повседневной пользой.',
     note: 'Не закупай лекарства коммерческими количествами. Сложные препараты от боли, простуды и сна проверяй по составу.',
@@ -171,6 +193,10 @@ export const shoppingDeals: ShoppingDeal[] = [
     japanPrice: 'около ¥990-7,990',
     worldPrice: 'около 2,000-8,000+ ₽',
     savings: '50-75%',
+    savingsPercent: 75,
+    reason: 'Базовый гардероб дешевле и свежее по коллекциям',
+    tags: ['taxfree'],
+    bestPlaces: ['Токио · UNIQLO Ginza', 'Осака · MUJI Grand Front Osaka'],
     description:
       'База для поездки и дома: футболки, AIRism, носки, белье и легкий пух часто дешевле и свежее по коллекциям.',
     note: 'Японская размерная сетка меньше европейской; верхнюю одежду лучше примерять.',
@@ -190,6 +216,10 @@ export const shoppingDeals: ShoppingDeal[] = [
     japanPrice: 'около ¥16,500-22,000',
     worldPrice: 'около 18,990-25,900 ₽',
     savings: '35-65%',
+    savingsPercent: 65,
+    reason: 'Кроссовки дешевле серого рынка, особенно беговые ASICS',
+    tags: ['taxfree'],
+    bestPlaces: ['Токио · Onitsuka Tiger Omotesando', 'Осака · ASICS Shinsaibashi'],
     description:
       'Кроссовки часто заметно дешевле российского серого рынка, особенно беговые ASICS и популярные Onitsuka.',
     note: 'Проверяй ширину колодки и наличие больших размеров. Популярные расцветки уходят быстро.',
@@ -209,6 +239,10 @@ export const shoppingDeals: ShoppingDeal[] = [
     japanPrice: 'около ¥11,440-46,200',
     worldPrice: 'около 11,900-33,000 ₽',
     savings: '35-55%',
+    savingsPercent: 55,
+    reason: 'Точные модели в Bic/Yodobashi: tax-free и баллы',
+    tags: ['compact', 'taxfree', 'gift'],
+    bestPlaces: ['Токио · Yodobashi Akiba', 'Осака · Bic Camera Namba'],
     description:
       'Понятная категория для покупки в Bic/Yodobashi: точные модели, tax-free и иногда магазинные points.',
     note: 'Сверяй референс и гарантию. Российское обслуживание японской версии может быть ограничено.',
@@ -228,6 +262,10 @@ export const shoppingDeals: ShoppingDeal[] = [
     japanPrice: 'около ¥4,950-42,900',
     worldPrice: 'около 5,000-36,000+ ₽',
     savings: '35-55%',
+    savingsPercent: 55,
+    reason: 'Porter без наценки в офиц. точках, Anello — бюджетно',
+    tags: ['taxfree'],
+    bestPlaces: ['Токио · Porter Omotesando', 'Осака · Kura Chika by Porter Osaka'],
     description:
       'Porter лучше брать в официальных точках, Anello - как практичный недорогой рюкзак без импортной наценки.',
     note: 'У Porter много фейков и ресейла; чек и официальный магазин сильно снижают риск.',
@@ -247,6 +285,10 @@ export const shoppingDeals: ShoppingDeal[] = [
     japanPrice: 'около ¥12,100-23,100',
     worldPrice: 'около 11,000-22,800 ₽',
     savings: '50-60%',
+    savingsPercent: 60,
+    reason: 'Шире выбор, проще проверить оригинал, ниже цена',
+    tags: ['taxfree'],
+    bestPlaces: ['Киото · Aritsugu Nishiki Market', 'Токио · Kappabashi'],
     description:
       'Ножи дают понятную выгоду: шире выбор, проще проверить оригинал и ниже цена на японские бренды.',
     note: 'Ножи только в сдаваемый багаж. Упакуй лезвие и сохрани чек.',
@@ -266,6 +308,10 @@ export const shoppingDeals: ShoppingDeal[] = [
     japanPrice: 'около ¥2,920-3,420',
     worldPrice: 'около 4,600-7,000 ₽',
     savings: '65-75%',
+    savingsPercent: 75,
+    reason: 'Лёгкая небьющаяся термокружка дешевле крупной техники',
+    tags: ['compact', 'gift'],
+    bestPlaces: ['Осака · Yodobashi Umeda', 'Токио · Bic Camera Yurakucho'],
     description:
       'Легкая, небьющаяся и полезная покупка. Часто выгоднее, чем крупная японская кухонная техника.',
     note: 'Рисоварки и часть техники на 100V лучше не брать без трансформатора; термосы безопасны.',
@@ -285,6 +331,10 @@ export const shoppingDeals: ShoppingDeal[] = [
     japanPrice: 'около ¥69,980-137,980',
     worldPrice: 'около 60,000-145,000 ₽',
     savings: '25-60%',
+    savingsPercent: 60,
+    reason: 'Выгодно по модели: Ricoh GR IIIx, PS5 Pro, Switch 2',
+    tags: ['voltage', 'taxfree'],
+    bestPlaces: ['Токио · Yodobashi Akiba', 'Осака · Bic Camera Namba'],
     description:
       'Выгодно только по конкретной модели и наличию. Лучшие кейсы - Ricoh GR IIIx, PS5 Pro и multi-language Switch 2.',
     note: 'Гарантия японская. Switch 2 Japan-only не бери без понимания ограничений языка и аккаунта.',
@@ -304,6 +354,10 @@ export const shoppingDeals: ShoppingDeal[] = [
     japanPrice: 'около ¥1,540-7,020',
     worldPrice: 'около 3,100-9,500 ₽',
     savings: '55-85%',
+    savingsPercent: 85,
+    reason: 'Официальная коллекционка дешевле и безопаснее импорта',
+    tags: ['gift'],
+    bestPlaces: ['Токио · Pokemon Center Tokyo DX', 'Осака · Pokemon Center Osaka'],
     description:
       'Официальная мелкая коллекционка в Японии обычно дешевле и безопаснее маркетплейс-импорта.',
     note: 'В Mandarake/Surugaya проверяй состояние. Коробки объемные, а лимитки быстро распродаются.',
@@ -320,9 +374,13 @@ export const shoppingDeals: ShoppingDeal[] = [
     shortName: 'Gunpla',
     image: 'photos/osaka/den-den-town.webp',
     imageLabel: 'Den Den Town и Akihabara: модельки и инструменты',
-    japanPrice: 'примерно ¥8,140 за MG Nu Gundam Ver.Ka',
-    worldPrice: 'около 17,000 ₽ за импорт',
+    japanPrice: 'около ¥8,140',
+    worldPrice: 'около 17,000 ₽',
     savings: 'до 75%',
+    savingsPercent: 75,
+    reason: 'Наборы Bandai дешевле по японской рознице',
+    tags: ['gift'],
+    bestPlaces: ['Токио · Gundam Base Tokyo', 'Осака · Joshin Super Kids Land'],
     description:
       'Наборы Bandai сильно дешевле при покупке по японской рознице, особенно если не нужен редкий ресейл.',
     note: 'Большие коробки легко мнутся и быстро забивают чемодан. У популярных релизов бывают лимиты.',
@@ -342,6 +400,10 @@ export const shoppingDeals: ShoppingDeal[] = [
     japanPrice: 'около ¥35,640-41,250',
     worldPrice: 'около 51,000-68,000 ₽',
     savings: '50-75%',
+    savingsPercent: 75,
+    reason: 'Маркеры и карандаши дешевле импорта, особенно наборами',
+    tags: ['taxfree'],
+    bestPlaces: ['Токио · Sekaido Shinjuku', 'Осака · Yodobashi Umeda'],
     description:
       'Профессиональные маркеры и карандаши в Японии заметно дешевле импорта, особенно большими наборами.',
     note: 'Наборы тяжелые: Copic 72 около 1.3 кг, Holbein 150 еще массивнее.',
@@ -361,6 +423,10 @@ export const shoppingDeals: ShoppingDeal[] = [
     japanPrice: 'около ¥3,520-51,568',
     worldPrice: 'около 6,400-43,000 ₽',
     savings: '45-75%',
+    savingsPercent: 75,
+    reason: 'Титановая кружка, горелка, катушка — без наценки',
+    tags: ['compact', 'gift', 'taxfree'],
+    bestPlaces: ['Токио · WILD-1', 'Осака · Alpen Outdoors Namba'],
     description:
       'Лучше всего работают компактные товары: титановая кружка, горелка без баллона, катушка или велокомпонент.',
     note: 'Газовые баллоны в самолет нельзя. У дорогих JDM-катушек сервис фактически японский.',
@@ -380,6 +446,10 @@ export const shoppingDeals: ShoppingDeal[] = [
     japanPrice: 'примерно ¥1,000-5,900',
     worldPrice: 'около 3,900 ₽+ или кратно дороже у посредников',
     savings: 'высокая ценность',
+    savingsPercent: 0,
+    reason: 'Связь, доставка багажа и очки за день — экономят силы',
+    tags: ['compact'],
+    bestPlaces: ['Токио · JINS / Zoff Shinjuku', 'Осака · JINS Namba / Umeda'],
     description:
       'Это не сувениры, но часто экономит больше денег и сил: связь, чемоданы между отелями и запасные очки за день.',
     note: 'Для eSIM нужен unlocked phone, для Yamato - запас времени, для очков - простой рецепт или проверка на месте.',

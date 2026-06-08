@@ -1,25 +1,26 @@
-import { useMemo, useState } from 'react';
+import { useId, useMemo, useState, type ReactNode } from 'react';
 import {
   shoppingCategories,
   shoppingCheckedAt,
   shoppingDeals,
   shoppingSources,
+  type DealTag,
   type ShoppingCategory,
+  type ShoppingCategoryMeta,
   type ShoppingDeal,
 } from '../data/shoppingDeals';
 import { CITY_ACCENT } from '../lib/tags';
+import Collapsible from '../components/Collapsible';
 
 type CategoryFilter = ShoppingCategory | 'all';
+type SortKey = 'savings' | 'default';
 
 const categoryById = new Map(
   shoppingCategories.map((category) => [category.id, category]),
 );
 
-const cityLabels = {
-  osaka: 'Осака',
-  kyoto: 'Киото',
-  tokyo: 'Токио',
-} as const;
+const rowPrice = (value: string) =>
+  value.replace(/^(около|примерно)\s+/i, '').replace(/\s+за импорт$/i, '');
 
 const dealRules = [
   {
@@ -40,13 +41,48 @@ const dealRules = [
   },
 ];
 
+const tagFilters: { tag: DealTag; label: string }[] = [
+  { tag: 'gift', label: '🎁 Подарки' },
+  { tag: 'compact', label: '🎒 Компактно' },
+  { tag: 'voltage', label: '🔌 Без 100V риска' },
+  { tag: 'taxfree', label: '🏷️ Tax-free' },
+];
+
 export default function ShoppingDeals() {
   const [category, setCategory] = useState<CategoryFilter>('all');
+  const [activeTags, setActiveTags] = useState<Set<DealTag>>(() => new Set());
+  const [sort, setSort] = useState<SortKey>('savings');
 
-  const visibleDeals = useMemo(
-    () => shoppingDeals.filter((deal) => category === 'all' || deal.category === category),
-    [category],
-  );
+  const toggleTag = (tag: DealTag) =>
+    setActiveTags((prev) => {
+      const next = new Set(prev);
+      if (next.has(tag)) next.delete(tag);
+      else next.add(tag);
+      return next;
+    });
+
+  const resetFilters = () => {
+    setCategory('all');
+    setActiveTags(new Set());
+  };
+
+  const visibleDeals = useMemo(() => {
+    let list = shoppingDeals.filter(
+      (deal) => category === 'all' || deal.category === category,
+    );
+
+    activeTags.forEach((tag) => {
+      list =
+        tag === 'voltage'
+          ? list.filter((deal) => !deal.tags.includes('voltage'))
+          : list.filter((deal) => deal.tags.includes(tag));
+    });
+
+    if (sort === 'savings') {
+      list = [...list].sort((a, b) => b.savingsPercent - a.savingsPercent);
+    }
+    return list;
+  }, [category, activeTags, sort]);
 
   const counts = useMemo(() => {
     const next = new Map<CategoryFilter, number>([['all', shoppingDeals.length]]);
@@ -57,41 +93,38 @@ export default function ShoppingDeals() {
   }, []);
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-5 px-3 py-4">
-      <section className="flex flex-col gap-3">
-        <div className="flex flex-col gap-2">
-          <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
-            Shopping guide
-          </p>
-          <h1 className="text-xl font-extrabold text-slate-900">Выгодно купить</h1>
-          <p className="max-w-3xl text-sm leading-relaxed text-slate-600">
-            16 покупок и услуг, которые туристу из России чаще всего выгоднее смотреть
-            в Японии: drugstore-косметика, базовая одежда, JDM-часы, кухонные вещи,
-            электроника, хобби и сервисы по маршруту Osaka - Kyoto - Tokyo.
-          </p>
-          <p className="text-xs font-medium text-slate-500">
-            Цены ориентировочные, источники сверены: {shoppingCheckedAt}. Финальную цену,
-            наличие и tax-free проверяй в день покупки.
-          </p>
+    <div className="mx-auto max-w-3xl px-3 py-4">
+      <header className="mb-3 flex flex-col gap-1">
+        <div className="flex items-baseline justify-between gap-2">
+          <h1 className="text-lg font-extrabold leading-tight text-slate-900">
+            Выгодно купить в Японии
+          </h1>
+          <span className="shrink-0 text-[11px] font-medium text-slate-400">
+            {shoppingDeals.length} покупок · сверено {shoppingCheckedAt}
+          </span>
         </div>
+        <p className="text-xs leading-snug text-slate-500">
+          Что туристу из РФ выгоднее брать в Японии по маршруту Осака → Киото → Токио.
+          Цены ориентировочные — финальную сверяй в день покупки.
+        </p>
+      </header>
 
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {dealRules.map((rule) => (
-            <article
-              key={rule.title}
-              className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm"
-            >
-              <h2 className="text-sm font-extrabold text-slate-900">{rule.title}</h2>
-              <p className="mt-1 text-xs leading-relaxed text-slate-600">{rule.text}</p>
-            </article>
-          ))}
-        </div>
-      </section>
+      <div className="mb-3">
+        <Collapsible title="⚠️ Важно перед покупкой" defaultCollapsed>
+          <ul className="flex flex-col gap-2">
+            {dealRules.map((rule) => (
+              <li key={rule.title} className="text-xs leading-relaxed">
+                <span className="font-bold text-slate-800">{rule.title}. </span>
+                <span className="text-slate-600">{rule.text}</span>
+              </li>
+            ))}
+          </ul>
+        </Collapsible>
+      </div>
 
-      <section className="flex flex-col gap-2">
-        <h2 className="text-sm font-bold text-slate-800">Категории</h2>
-        <div className="flex gap-2 overflow-x-auto pb-1">
-          <CategoryButton
+      <div className="sticky top-[61px] z-20 -mx-3 mb-3 border-b border-slate-200 bg-white/95 px-3 pb-2 pt-2 backdrop-blur supports-[backdrop-filter]:bg-white/80 md:static md:mx-0 md:rounded-xl md:border md:bg-white">
+        <div className="-mx-3 flex gap-1.5 overflow-x-auto px-3 pb-1.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <ChipCategory
             active={category === 'all'}
             icon="🛍️"
             label="Все"
@@ -99,7 +132,7 @@ export default function ShoppingDeals() {
             onClick={() => setCategory('all')}
           />
           {shoppingCategories.map((item) => (
-            <CategoryButton
+            <ChipCategory
               key={item.id}
               active={category === item.id}
               icon={item.icon}
@@ -109,15 +142,66 @@ export default function ShoppingDeals() {
             />
           ))}
         </div>
-      </section>
 
-      <section className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-        {visibleDeals.map((deal) => (
-          <DealCard key={deal.id} deal={deal} />
-        ))}
-      </section>
+        <div className="mt-1.5 flex items-center gap-1.5">
+          <div className="-mx-3 flex flex-1 gap-1.5 overflow-x-auto px-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {tagFilters.map((filter) => (
+              <ChipToggle
+                key={filter.tag}
+                active={activeTags.has(filter.tag)}
+                onClick={() => toggleTag(filter.tag)}
+              >
+                {filter.label}
+              </ChipToggle>
+            ))}
+          </div>
 
-      <footer className="flex flex-col gap-2 border-t border-slate-200 py-4">
+          <label className="relative shrink-0">
+            <span className="sr-only">Сортировка</span>
+            <select
+              value={sort}
+              onChange={(event) => setSort(event.target.value as SortKey)}
+              className="h-11 appearance-none rounded-full border border-slate-300 bg-white pl-3 pr-8 text-xs font-semibold text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+            >
+              <option value="savings">↓ Макс. выгода</option>
+              <option value="default">По умолчанию</option>
+            </select>
+            <svg
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+              className="pointer-events-none absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+            >
+              <path d="M5.5 8 10 12.5 14.5 8z" />
+            </svg>
+          </label>
+        </div>
+      </div>
+
+      {visibleDeals.length > 0 ? (
+        <ul className="flex flex-col gap-2">
+          {visibleDeals.map((deal) => (
+            <DealRow key={deal.id} deal={deal} />
+          ))}
+        </ul>
+      ) : (
+        <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-slate-300 bg-white px-4 py-10 text-center">
+          <span className="text-3xl" aria-hidden="true">🔍</span>
+          <p className="text-sm font-semibold text-slate-700">Ничего не нашлось</p>
+          <p className="max-w-xs text-xs leading-relaxed text-slate-500">
+            Под выбранные фильтры нет покупок. Сбросьте фильтры или выберите другую категорию.
+          </p>
+          <button
+            type="button"
+            onClick={resetFilters}
+            className="inline-flex min-h-[44px] items-center rounded-full border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 transition active:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+          >
+            Сбросить фильтры
+          </button>
+        </div>
+      )}
+
+      <footer className="mt-5 flex flex-col gap-2 border-t border-slate-200 py-4">
         <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
           Источники цен и правил
         </p>
@@ -128,7 +212,7 @@ export default function ShoppingDeals() {
               href={source.url}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex min-h-[32px] items-center rounded-full border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+              className="inline-flex min-h-[44px] items-center rounded-full border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
             >
               {source.label}
             </a>
@@ -139,7 +223,7 @@ export default function ShoppingDeals() {
   );
 }
 
-interface CategoryButtonProps {
+interface ChipCategoryProps {
   active: boolean;
   icon: string;
   label: string;
@@ -147,22 +231,23 @@ interface CategoryButtonProps {
   onClick: () => void;
 }
 
-function CategoryButton({ active, icon, label, count, onClick }: CategoryButtonProps) {
+function ChipCategory({ active, icon, label, count, onClick }: ChipCategoryProps) {
   return (
     <button
       type="button"
+      aria-pressed={active}
       onClick={onClick}
-      className={`inline-flex min-h-[44px] shrink-0 items-center gap-2 rounded-full border px-3 text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 ${
+      className={`inline-flex min-h-[44px] shrink-0 items-center gap-1.5 rounded-full border px-2.5 text-[13px] font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 ${
         active
           ? 'border-slate-900 bg-slate-900 text-white'
-          : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+          : 'border-slate-200 bg-white text-slate-700 active:bg-slate-100'
       }`}
     >
       <span aria-hidden="true">{icon}</span>
       <span className="whitespace-nowrap">{label}</span>
       <span
-        className={`rounded-full px-1.5 py-0.5 text-[11px] ${
-          active ? 'bg-white/15 text-slate-100' : 'bg-slate-100 text-slate-500'
+        className={`rounded-full px-1.5 text-[11px] tabular-nums ${
+          active ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'
         }`}
       >
         {count}
@@ -171,95 +256,201 @@ function CategoryButton({ active, icon, label, count, onClick }: CategoryButtonP
   );
 }
 
-interface DealCardProps {
-  deal: ShoppingDeal;
+interface ChipToggleProps {
+  active: boolean;
+  onClick: () => void;
+  children: ReactNode;
 }
 
-function DealCard({ deal }: DealCardProps) {
-  const category = categoryById.get(deal.category);
-
+function ChipToggle({ active, onClick, children }: ChipToggleProps) {
   return (
-    <article className="flex min-w-0 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-      <DealImage deal={deal} />
-
-      <div className="flex flex-1 flex-col gap-3 p-3">
-        <div className="flex flex-wrap items-center gap-2">
-          {category && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">
-              <span aria-hidden="true">{category.icon}</span>
-              {category.label}
-            </span>
-          )}
-          <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-bold text-emerald-700">
-            {deal.savings}
-          </span>
-        </div>
-
-        <div className="min-w-0">
-          <h2 className="break-words text-base font-extrabold leading-tight text-slate-900">
-            {deal.product}
-          </h2>
-          <p className="mt-1 text-sm leading-relaxed text-slate-600">{deal.description}</p>
-        </div>
-
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-          <PriceBox label="Средняя РФ / мир" value={deal.worldPrice} />
-          <PriceBox label="В Японии" value={deal.japanPrice} strong />
-        </div>
-
-        {deal.note && (
-          <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-900">
-            {deal.note}
-          </p>
-        )}
-
-        <div className="mt-auto flex flex-col gap-2 border-t border-slate-100 pt-3">
-          <h3 className="text-sm font-bold text-slate-800">Где искать</h3>
-          <div className="grid grid-cols-1 gap-2">
-            {(['osaka', 'kyoto', 'tokyo'] as const).map((city) => (
-              <CityPlaces
-                key={city}
-                city={city}
-                places={deal.buyIn[city]}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-    </article>
+    <button
+      type="button"
+      aria-pressed={active}
+      onClick={onClick}
+      className={`inline-flex min-h-[44px] shrink-0 items-center whitespace-nowrap rounded-full border px-3 text-[13px] font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 ${
+        active
+          ? 'border-emerald-600 bg-emerald-50 text-emerald-800'
+          : 'border-slate-200 bg-white text-slate-600 active:bg-slate-100'
+      }`}
+    >
+      {children}
+    </button>
   );
 }
 
-interface DealImageProps {
+interface DealRowProps {
   deal: ShoppingDeal;
 }
 
-function DealImage({ deal }: DealImageProps) {
-  const [failed, setFailed] = useState(false);
+function DealRow({ deal }: DealRowProps) {
+  const [open, setOpen] = useState(false);
+  const panelId = useId();
   const category = categoryById.get(deal.category);
 
-  if (failed) {
-    return (
-      <div className="flex aspect-video w-full items-center justify-center bg-slate-100 px-4 text-center">
-        <div>
-          <div className="text-2xl" aria-hidden="true">{category?.icon ?? '🛍️'}</div>
-          <div className="mt-1 text-sm font-bold text-slate-700">{deal.shortName}</div>
-        </div>
-      </div>
-    );
-  }
+  return (
+    <li>
+      <article className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+        <button
+          type="button"
+          onClick={() => setOpen((prev) => !prev)}
+          aria-expanded={open}
+          aria-controls={panelId}
+          aria-label={`${deal.shortName}: выгода ${deal.savings}, в Японии ${rowPrice(deal.japanPrice)}`}
+          className="flex min-h-[44px] w-full items-stretch gap-3 p-2.5 text-left active:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-slate-400"
+        >
+          <DealThumb deal={deal} category={category} />
+
+          <div className="flex min-w-0 flex-1 flex-col justify-center gap-0.5">
+            {category && (
+              <span className="inline-flex w-fit items-center gap-1 rounded bg-slate-100 px-1.5 py-px text-[10px] font-semibold text-slate-500">
+                <span aria-hidden="true">{category.icon}</span>
+                {category.label}
+              </span>
+            )}
+            <span className="truncate text-sm font-bold leading-tight text-slate-900">
+              {deal.shortName}
+            </span>
+            <p className="line-clamp-2 text-xs leading-snug text-slate-500">{deal.reason}</p>
+          </div>
+
+          <div className="flex max-w-[6.5rem] shrink-0 flex-col items-end justify-center gap-0.5 pl-1">
+            {deal.savingsPercent > 0 ? (
+              <span className="rounded-md bg-emerald-600 px-2 py-1 text-base font-extrabold leading-none text-white tabular-nums">
+                −{deal.savingsPercent}%
+              </span>
+            ) : (
+              <span className="whitespace-nowrap rounded-md bg-emerald-600 px-2 py-1 text-[10px] font-bold leading-none text-white">
+                {deal.savings}
+              </span>
+            )}
+            <span className="max-w-full truncate text-[11px] font-bold leading-tight text-emerald-700 tabular-nums">
+              {rowPrice(deal.japanPrice)}
+            </span>
+            <span className="max-w-full truncate text-[10px] leading-tight text-slate-400 line-through tabular-nums">
+              {rowPrice(deal.worldPrice)}
+            </span>
+          </div>
+
+          <svg
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            aria-hidden="true"
+            className={`h-5 w-5 shrink-0 self-center text-slate-300 transition-transform ${open ? 'rotate-180' : ''}`}
+          >
+            <path
+              fillRule="evenodd"
+              d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.17l3.71-3.94a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </button>
+
+        {open && <DealDetails deal={deal} category={category} panelId={panelId} />}
+      </article>
+    </li>
+  );
+}
+
+interface DealThumbProps {
+  deal: ShoppingDeal;
+  category: ShoppingCategoryMeta | undefined;
+}
+
+function DealThumb({ deal, category }: DealThumbProps) {
+  const [failed, setFailed] = useState(false);
 
   return (
-    <div className="relative">
-      <img
-        src={import.meta.env.BASE_URL + deal.image}
-        alt={deal.imageLabel}
-        loading="lazy"
-        onError={() => setFailed(true)}
-        className="aspect-video w-full object-cover"
-      />
-      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/70 to-transparent p-3">
-        <p className="text-xs font-semibold text-white drop-shadow">{deal.imageLabel}</p>
+    <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-slate-100">
+      {failed ? (
+        <div className="flex h-full w-full items-center justify-center text-2xl" aria-hidden="true">
+          {category?.icon ?? '🛍️'}
+        </div>
+      ) : (
+        <img
+          src={import.meta.env.BASE_URL + deal.image}
+          alt=""
+          loading="lazy"
+          onError={() => setFailed(true)}
+          className="h-full w-full object-cover"
+        />
+      )}
+    </div>
+  );
+}
+
+interface DealDetailsProps {
+  deal: ShoppingDeal;
+  category: ShoppingCategoryMeta | undefined;
+  panelId: string;
+}
+
+function DealDetails({ deal, category, panelId }: DealDetailsProps) {
+  return (
+    <div id={panelId} className="border-t border-slate-100 px-2.5 pb-3 pt-2.5">
+      <div className="mb-2 flex flex-wrap items-center gap-1.5">
+        {category && (
+          <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
+            <span aria-hidden="true">{category.icon}</span>
+            {category.label}
+          </span>
+        )}
+        <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-bold text-emerald-700">
+          {deal.savings}
+        </span>
+        {deal.tags.includes('taxfree') && (
+          <span className="rounded-full bg-sky-50 px-2 py-0.5 text-[11px] font-semibold text-sky-700">
+            🏷️ tax-free
+          </span>
+        )}
+        {deal.tags.includes('voltage') && (
+          <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-800">
+            🔌 100V риск
+          </span>
+        )}
+      </div>
+
+      <p className="mb-1 text-sm font-bold text-slate-900">{deal.product}</p>
+
+      <div className="mb-2 grid grid-cols-2 gap-2">
+        <PriceBox label="Средняя РФ / мир" value={deal.worldPrice} />
+        <PriceBox label="В Японии" value={deal.japanPrice} strong />
+      </div>
+
+      <p className="text-xs leading-relaxed text-slate-600">{deal.description}</p>
+
+      {deal.note && (
+        <p className="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-2.5 py-1.5 text-[11px] leading-relaxed text-amber-900">
+          {deal.note}
+        </p>
+      )}
+
+      {deal.bestPlaces.length > 0 && (
+        <p className="mt-2 text-[11px] leading-relaxed text-slate-500">
+          <span className="font-bold text-slate-700">Лучше всего: </span>
+          {deal.bestPlaces.join(' · ')}
+        </p>
+      )}
+
+      <div className="mt-3">
+        <h3 className="mb-1.5 text-[10px] font-bold uppercase tracking-wide text-slate-400">
+          Где искать
+        </h3>
+        <div className="flex flex-col gap-1.5">
+          {(['osaka', 'kyoto', 'tokyo'] as const).map((city) => (
+            <div key={city} className="flex gap-2">
+              <span
+                className="mt-0.5 inline-flex h-5 shrink-0 items-center rounded px-1.5 text-[10px] font-bold"
+                style={{ backgroundColor: CITY_ACCENT[city].bg, color: CITY_ACCENT[city].text }}
+              >
+                {CITY_ACCENT[city].name}
+              </span>
+              <p className="text-[11px] leading-relaxed text-slate-600">
+                {deal.buyIn[city].join(' · ')}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -284,35 +475,6 @@ function PriceBox({ label, value, strong = false }: PriceBoxProps) {
       <p className={`mt-1 break-words text-sm leading-snug ${strong ? 'font-extrabold text-emerald-950' : 'font-semibold text-slate-800'}`}>
         {value}
       </p>
-    </div>
-  );
-}
-
-interface CityPlacesProps {
-  city: 'osaka' | 'kyoto' | 'tokyo';
-  places: string[];
-}
-
-function CityPlaces({ city, places }: CityPlacesProps) {
-  const accent = CITY_ACCENT[city];
-
-  return (
-    <div className="rounded-lg border border-slate-100 bg-slate-50 p-2">
-      <div className="mb-1 flex items-center gap-2">
-        <span
-          className="inline-flex shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold"
-          style={{ backgroundColor: accent.bg, color: accent.text }}
-        >
-          {cityLabels[city]}
-        </span>
-      </div>
-      <ul className="flex flex-col gap-1">
-        {places.map((place) => (
-          <li key={place} className="break-words text-xs leading-relaxed text-slate-600">
-            {place}
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }

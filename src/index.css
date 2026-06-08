@@ -21,7 +21,10 @@
 
 @layer utilities {
   .no-x-overflow {
-    overflow-x: hidden;
+    /* clip (not hidden) prevents horizontal bleed without making overflow-y
+       compute to auto, which would create a scroll container and break
+       viewport-relative position: sticky on the header and controls bar. */
+    overflow-x: clip;
   }
 }
 
