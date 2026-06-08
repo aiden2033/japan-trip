@@ -339,7 +339,7 @@ function DealRow({ deal }: DealRowProps) {
             <p className="line-clamp-2 text-xs leading-snug text-slate-500">{deal.reason}</p>
           </div>
 
-          <div className="flex max-w-[6.5rem] shrink-0 flex-col items-end justify-center gap-0.5 pl-1">
+          <div className="flex w-[7.25rem] shrink-0 flex-col items-end justify-center gap-0.5 pl-1 sm:w-[8rem]">
             {deal.savingsPercent > 0 ? (
               <span className="rounded-md bg-emerald-600 px-2 py-1 text-base font-extrabold leading-none text-white tabular-nums">
                 −{deal.savingsPercent}%
@@ -436,6 +436,21 @@ function DealDetails({ deal, category, panelId }: DealDetailsProps) {
         {deal.tags.includes('voltage') && (
           <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-800">
             🔌 100V риск
+          </span>
+        )}
+        {deal.tags.includes('warranty') && (
+          <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
+            🧾 гарантия JP
+          </span>
+        )}
+        {deal.tags.includes('language') && (
+          <span className="rounded-full bg-violet-50 px-2 py-0.5 text-[11px] font-semibold text-violet-700">
+            🌐 язык / регион
+          </span>
+        )}
+        {deal.tags.includes('bulky') && (
+          <span className="rounded-full bg-orange-50 px-2 py-0.5 text-[11px] font-semibold text-orange-700">
+            🧳 крупно
           </span>
         )}
       </div>

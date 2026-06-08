@@ -5,11 +5,19 @@ export type ShoppingCategory =
   | 'accessories'
   | 'kitchen'
   | 'electronics'
+  | 'eyewear'
   | 'hobby'
   | 'outdoor'
   | 'services';
 
-export type DealTag = 'gift' | 'compact' | 'voltage' | 'taxfree';
+export type DealTag =
+  | 'gift'
+  | 'compact'
+  | 'voltage'
+  | 'taxfree'
+  | 'warranty'
+  | 'language'
+  | 'bulky';
 
 export interface ShoppingCategoryMeta {
   id: ShoppingCategory;
@@ -57,6 +65,7 @@ export const shoppingCategories: ShoppingCategoryMeta[] = [
   { id: 'accessories', icon: '⌚', label: 'Аксессуары' },
   { id: 'kitchen', icon: '🔪', label: 'Кухня' },
   { id: 'electronics', icon: '🎮', label: 'Техника' },
+  { id: 'eyewear', icon: '👓', label: 'Очки' },
   { id: 'hobby', icon: '🎨', label: 'Хобби' },
   { id: 'outdoor', icon: '🏕️', label: 'Outdoor' },
   { id: 'services', icon: '🧳', label: 'Услуги' },
@@ -82,6 +91,34 @@ export const shoppingSources: ShoppingSource[] = [
   {
     label: 'Yodobashi',
     url: 'https://www.yodobashi.com/',
+  },
+  {
+    label: 'Nintendo Switch 2 lineup',
+    url: 'https://www.nintendo.com/jp/hardware/switch2/lineup/index.html',
+  },
+  {
+    label: 'PlayStation Blog price update',
+    url: 'https://blog.ja.playstation.com/2026/03/27/20260327-ps5-price-update-o/',
+  },
+  {
+    label: 'Zoff tourist glasses',
+    url: 'https://www.zoff.co.jp/shop/about/tourist.aspx',
+  },
+  {
+    label: 'JINS international FAQ',
+    url: 'https://faq-jp.jins.com/jp/faq/glasses/faq_detail.html?category=3040&id=1627&page=1',
+  },
+  {
+    label: 'OWNDAYS services',
+    url: 'https://www.owndays.com/jp/en/services',
+  },
+  {
+    label: 'Garmin Japan',
+    url: 'https://www.garmin.co.jp/products/wearables/forerunner-965-black/',
+  },
+  {
+    label: 'e-earphone',
+    url: 'https://www.e-earphone.jp/',
   },
   {
     label: 'Pokemon Center',
@@ -279,6 +316,29 @@ export const shoppingDeals: ShoppingDeal[] = [
     },
   },
   {
+    id: 'jins-zoff-basic-glasses',
+    category: 'eyewear',
+    product: 'JINS, Zoff, OWNDAYS, Megane Ichiba prescription glasses',
+    shortName: 'Очки с диоптриями',
+    image: 'photos/tokyo/shibuya_cross.jpg',
+    imageLabel: 'Shibuya и Shinjuku: быстрые сети оптики рядом с маршрутом',
+    japanPrice: 'около ¥5,500-15,000+',
+    worldPrice: 'около 5,000-30,000 ₽+',
+    savings: '50-80%',
+    savingsPercent: 80,
+    reason: 'Базовые, 1.74, фотохром и прогрессивы сильно дешевле РФ',
+    tags: ['compact', 'taxfree'],
+    bestPlaces: ['Осака · JINS / Zoff / Megane Ichiba Namba', 'Токио · Zoff / OWNDAYS Shinjuku'],
+    description:
+      'Самый надежный optical-deal: обычные single-vision очки часто готовы за 30-60 минут, а 1.67-1.74, фотохром, цветные и прогрессивные линзы стоят намного доступнее РФ.',
+    note: 'Иди в первый день поездки. Возьми рецепт с SPH / CYL / AXIS / ADD / PD латиницей, паспорт и текущие очки. Сложные рецепты могут занять 7-10 дней.',
+    buyIn: {
+      osaka: ['JINS Namba Parks / Umeda', 'Zoff Shinsaibashi / Namba', 'Megane Ichiba Shinsaibashi'],
+      kyoto: ['Zoff Kyoto Kawaramachi', 'Megane Ichiba Kyoto Shijodori', 'JINS Kyoto Teramachi'],
+      tokyo: ['JINS Shinjuku / Shibuya', 'Zoff Yaechika / Shinjuku', 'OWNDAYS Ginza / Shinjuku'],
+    },
+  },
+  {
     id: 'tojiro-global-kai',
     category: 'kitchen',
     product: 'Tojiro F-808, Global G-2, Kai Shun',
@@ -325,26 +385,164 @@ export const shoppingDeals: ShoppingDeal[] = [
     },
   },
   {
-    id: 'ricoh-switch-ps5',
+    id: 'switch2-multilang-games',
     category: 'electronics',
-    product: 'Ricoh GR IIIx, Switch 2 Multi-Language, PS5 Pro',
-    shortName: 'Камеры и консоли',
+    product: 'Nintendo Switch 2 Multi-Language System, Pro Controller, physical games',
+    shortName: 'Switch 2 Multi-Language',
     image: 'photos/osaka/den-den-town.webp',
-    imageLabel: 'Den Den Town: техника, игры и хобби в Осаке',
-    japanPrice: 'около ¥69,980-137,980',
-    worldPrice: 'около 60,000-145,000 ₽',
-    savings: '25-60%',
-    savingsPercent: 60,
-    reason: 'Выгодно по модели: Ricoh GR IIIx, PS5 Pro, Switch 2',
-    tags: ['voltage', 'taxfree'],
-    bestPlaces: ['Токио · Yodobashi Akiba', 'Осака · Bic Camera Namba'],
+    imageLabel: 'Den Den Town: игровые магазины и техника в Осаке',
+    japanPrice: 'около ¥9,980-69,980',
+    worldPrice: 'около 7,500-55,000 ₽',
+    savings: '35-52%',
+    savingsPercent: 52,
+    reason: 'Консоль, Pro Controller и картриджи заметно дешевле РФ-импорта',
+    tags: ['taxfree', 'language', 'warranty'],
+    bestPlaces: ['Осака · Bic Camera Namba / Joshin', 'Токио · Nintendo Tokyo / Yodobashi Akiba'],
     description:
-      'Выгодно только по конкретной модели и наличию. Лучшие кейсы - Ricoh GR IIIx, PS5 Pro и multi-language Switch 2.',
-    note: 'Гарантия японская. Switch 2 Japan-only не бери без понимания ограничений языка и аккаунта.',
+      'Сильный игровой deal, но только если это Multi-Language System или аксессуары/физические игры. Pro Controller и картриджи проще всего проверить и увезти.',
+    note: 'Не бери Nintendo Switch 2 Japanese-Language System: у нее только японский язык и привязка к Nintendo Account Japan.',
     buyIn: {
-      osaka: ['Bic Camera Namba', 'Yodobashi Umeda', 'Den Den Town stores'],
+      osaka: ['Bic Camera Namba', 'Yodobashi Umeda', 'Joshin Super Kids Land / Den Den Town'],
+      kyoto: ['Yodobashi Kyoto', 'Bic Camera JR Kyoto', 'Nintendo Kyoto'],
+      tokyo: ['Nintendo Tokyo / Osaka-style stock checks', 'Yodobashi Akiba / Shinjuku', 'Bic Camera Yurakucho'],
+    },
+  },
+  {
+    id: 'psvr2-quest3s',
+    category: 'electronics',
+    product: 'PlayStation VR2 и Meta Quest 3S',
+    shortName: 'PS VR2 / Quest 3S',
+    image: 'photos/tokyo/akihabara.jpg',
+    imageLabel: 'Akihabara: VR-шлемы лучше проверять в крупных сетях',
+    japanPrice: 'около ¥59,400-66,980',
+    worldPrice: 'около 34,000-58,000 ₽',
+    savings: '28-52%',
+    savingsPercent: 52,
+    reason: 'PS VR2 силен по скидке, Quest 3S проходит порог как standalone VR',
+    tags: ['taxfree', 'warranty', 'language'],
+    bestPlaces: ['Токио · Yodobashi Akiba / Bic Yurakucho', 'Осака · Bic Camera Namba'],
+    description:
+      'VR оказался сильнее больших консолей как travel-покупка: PS VR2 заметно дешевле РФ, Quest 3S работает автономно и не требует 100V.',
+    note: 'PS5 Pro и Quest 3 не включены: после свежих повышений/багажа экономия слабее. У Quest проверь Meta-аккаунт, у PS VR2 - комплектность.',
+    buyIn: {
+      osaka: ['Bic Camera Namba', 'Yodobashi Umeda', 'Sofmap Namba / Den Den Town'],
       kyoto: ['Yodobashi Kyoto', 'Bic Camera JR Kyoto'],
       tokyo: ['Yodobashi Akiba / Shinjuku', 'Bic Camera Yurakucho', 'Sony Store Ginza'],
+    },
+  },
+  {
+    id: 'gamepads-ps-nintendo',
+    category: 'electronics',
+    product: 'DualSense, DualSense Edge, Nintendo Switch 2 Pro Controller',
+    shortName: 'Геймпады',
+    image: 'photos/tokyo/akihabara.jpg',
+    imageLabel: 'Akihabara: геймпады и аксессуары удобно сверять по витринам',
+    japanPrice: 'около ¥9,800-34,980',
+    worldPrice: 'около 6,000-21,000 ₽',
+    savings: '30-52%',
+    savingsPercent: 52,
+    reason: 'Компактная игровая покупка без проблем с питанием',
+    tags: ['compact', 'taxfree', 'gift', 'warranty'],
+    bestPlaces: ['Токио · Yodobashi Akiba', 'Осака · Bic Camera Namba'],
+    description:
+      'Лучше крупных консолей как travel-покупка: работают в РФ, легко увезти, а DualSense Edge и Switch 2 Pro Controller часто дают максимальный процент экономии.',
+    note: 'Гарантия японская. Для PC у Switch 2 Pro Controller совместимость хуже, чем у DualSense.',
+    buyIn: {
+      osaka: ['Bic Camera Namba', 'Yodobashi Umeda', 'Joshin Super Kids Land'],
+      kyoto: ['Yodobashi Kyoto', 'Bic Camera JR Kyoto'],
+      tokyo: ['Yodobashi Akiba / Shinjuku', 'Bic Camera Yurakucho', 'Sofmap Akihabara'],
+    },
+  },
+  {
+    id: 'fujifilm-x100vi',
+    category: 'electronics',
+    product: 'Fujifilm X100VI JP/EN model',
+    shortName: 'Fujifilm X100VI',
+    image: 'photos/tokyo/daikanyama.jpeg',
+    imageLabel: 'Daikanyama: фотодень легко совместить с камерными магазинами',
+    japanPrice: 'около ¥281,600',
+    worldPrice: 'около 230,000 ₽',
+    savings: '45-50%',
+    savingsPercent: 50,
+    reason: 'Если есть в наличии, камера сильно дешевле РФ-импорта',
+    tags: ['compact', 'taxfree', 'warranty', 'language'],
+    bestPlaces: ['Токио · Map Camera Shinjuku', 'Осака · Bic Camera Namba'],
+    description:
+      'Редкий, но сильный фото-deal: X100VI работает в РФ, а экономия перекрывает японскую гарантию, если модель действительно доступна по розничной цене.',
+    note: 'Главный риск - дефицит. Проверь меню JP/EN, отсутствие русского языка и наличие tax-free до оплаты.',
+    buyIn: {
+      osaka: ['Bic Camera Namba', 'Yodobashi Umeda', 'Kitamura camera stores'],
+      kyoto: ['Yodobashi Kyoto', 'Bic Camera JR Kyoto'],
+      tokyo: ['Map Camera Shinjuku', 'Bic Camera Yurakucho', 'Yodobashi Akiba / Shinjuku'],
+    },
+  },
+  {
+    id: 'sony-wf1000xm5',
+    category: 'electronics',
+    product: 'Technics EAH-AZ100 и Sony WF-1000XM5',
+    shortName: 'Premium earbuds',
+    image: 'photos/tokyo/shibuya_cross.jpg',
+    imageLabel: 'Shibuya: наушники удобно тестировать в Bic и e-earphone',
+    japanPrice: 'около ¥24,399-39,600',
+    worldPrice: 'около 18,400-20,700 ₽',
+    savings: '20-45%',
+    savingsPercent: 45,
+    reason: 'Technics силен по низкой цене, Sony выгоден только до ¥25,000',
+    tags: ['compact', 'taxfree', 'gift', 'warranty'],
+    bestPlaces: ['Осака · e-earphone Nipponbashi', 'Токио · e-earphone Akihabara'],
+    description:
+      'Компактная и понятная покупка: Bluetooth и USB-C работают глобально. Technics AZ100 проходит порог по Kakaku/скидкам, Sony WF-1000XM5 - только при цене до ¥25,000.',
+    note: 'Проверь цвет, голосовые подсказки и гарантию. Если Sony дороже ¥25,000, сравни с РФ перед покупкой.',
+    buyIn: {
+      osaka: ['e-earphone Osaka Nipponbashi', 'Bic Camera Namba', 'Yodobashi Umeda'],
+      kyoto: ['Yodobashi Kyoto', 'Bic Camera JR Kyoto'],
+      tokyo: ['e-earphone Akihabara', 'Yodobashi Akiba', 'Bic Camera Shinjuku'],
+    },
+  },
+  {
+    id: 'garmin-forerunner-965',
+    category: 'electronics',
+    product: 'Garmin Forerunner 965',
+    shortName: 'Garmin 965',
+    image: 'photos/tokyo/kawaguchiko.webp',
+    imageLabel: 'Fuji area: Garmin логично брать под маршрут и трекинг',
+    japanPrice: 'около ¥67,840-76,320',
+    worldPrice: 'около 59,990 ₽',
+    savings: 'около 40%',
+    savingsPercent: 40,
+    reason: 'Спортивные часы проходят порог только на sale / tax-free',
+    tags: ['compact', 'taxfree', 'warranty', 'language'],
+    bestPlaces: ['Токио · Yodobashi Akiba', 'Осака · Garmin dealers / Bic'],
+    description:
+      'Forerunner 965 имеет смысл при скидке или tax-free: это компактная покупка для бега и трекинга, но не универсальный smartwatch для РФ.',
+    note: 'Порог покупки: примерно ¥74,000 или ниже. Заранее проверь язык, регион карт и Garmin Pay.',
+    buyIn: {
+      osaka: ['Bic Camera Namba', 'Yodobashi Umeda', 'Garmin dealer stores'],
+      kyoto: ['Yodobashi Kyoto', 'Bic Camera JR Kyoto'],
+      tokyo: ['Yodobashi Akiba / Shinjuku', 'Bic Camera Yurakucho', 'Garmin dealer stores'],
+    },
+  },
+  {
+    id: 'lamdash-refa-smartw',
+    category: 'electronics',
+    product: 'Panasonic Lamdash PRO 6 и ReFa BEAUTECH DRYER SMART W',
+    shortName: 'Lamdash / ReFa W',
+    image: 'photos/osaka/umeda_sky_building.avif',
+    imageLabel: 'Umeda: крупные сети техники рядом со станцией',
+    japanPrice: 'около ¥40,000-55,000',
+    worldPrice: 'около 32,400-56,700 ₽',
+    savings: '40-55%',
+    savingsPercent: 55,
+    reason: 'Выгодны только версии с 100-240V и понятной моделью',
+    tags: ['taxfree', 'warranty'],
+    bestPlaces: ['Осака · Yodobashi Umeda', 'Токио · Bic Camera Yurakucho'],
+    description:
+      'Lamdash PRO 6 и ReFa SMART W - редкие примеры уходовой техники, которую можно брать для РФ без тяжелого трансформатора.',
+    note: 'Критично: на коробке/блоке должно быть AC100-240V. Dyson Japan, Nanocare domestic и рисоварки на 100V не бери.',
+    buyIn: {
+      osaka: ['Yodobashi Umeda', 'Bic Camera Namba', 'department stores with ReFa counters'],
+      kyoto: ['Yodobashi Kyoto', 'Bic Camera JR Kyoto'],
+      tokyo: ['Bic Camera Yurakucho', 'Yodobashi Akiba / Shinjuku', 'ReFa counters in department stores'],
     },
   },
   {
@@ -442,24 +640,24 @@ export const shoppingDeals: ShoppingDeal[] = [
   {
     id: 'esim-yamato-jins',
     category: 'services',
-    product: 'eSIM, Yamato luggage delivery, JINS/Zoff glasses',
-    shortName: 'Сервисы',
+    product: 'eSIM и Yamato luggage delivery',
+    shortName: 'Связь / багаж',
     image: 'photos/tokyo/shibuya_cross.jpg',
-    imageLabel: 'Shibuya: связь, очки и багажные сервисы решают логистику',
-    japanPrice: 'примерно ¥1,000-5,900',
-    worldPrice: 'около 3,900 ₽+ или кратно дороже у посредников',
+    imageLabel: 'Shibuya: связь и багажные сервисы решают логистику',
+    japanPrice: 'примерно ¥1,000-3,000',
+    worldPrice: 'около 3,900 ₽+ или дороже у посредников',
     savings: 'высокая ценность',
     savingsPercent: 0,
-    reason: 'Связь, доставка багажа и очки за день — экономят силы',
+    reason: 'Связь и доставка чемодана часто экономят больше сил, чем денег',
     tags: ['compact'],
-    bestPlaces: ['Токио · JINS / Zoff Shinjuku', 'Осака · JINS Namba / Umeda'],
+    bestPlaces: ['Токио · eSIM online / Yamato counters', 'Осака · Yamato через отель'],
     description:
-      'Это не сувениры, но часто экономит больше денег и сил: связь, чемоданы между отелями и запасные очки за день.',
-    note: 'Для eSIM нужен unlocked phone, для Yamato - запас времени, для очков - простой рецепт или проверка на месте.',
+      'Это не сувениры, но часто экономит силы на маршруте: связь без роуминга и отправка чемодана между отелями.',
+    note: 'Для eSIM нужен unlocked phone, для Yamato - запас времени и корректный адрес следующего отеля.',
     buyIn: {
-      osaka: ['FamilyMart / IIJ eSIM', 'Yamato counters or hotel front desk', 'JINS Namba / Umeda'],
-      kyoto: ['FamilyMart', 'Yamato через отель', 'JINS / Zoff Kyoto Kawaramachi'],
-      tokyo: ['Ubigi / Willer online', 'Yamato / JAL ABC airports', 'JINS / Zoff Shinjuku / Shibuya'],
+      osaka: ['FamilyMart / IIJ eSIM', 'Yamato counters or hotel front desk'],
+      kyoto: ['FamilyMart', 'Yamato через отель'],
+      tokyo: ['Ubigi / Willer online', 'Yamato / JAL ABC airports'],
     },
   },
 ];
