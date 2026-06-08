@@ -268,8 +268,9 @@ export default function CityMap({
       >
         <EnableMapGestures />
         <TileLayer
-          attribution="&copy; OpenStreetMap"
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution="&copy; OpenStreetMap, &copy; CARTO"
+          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+          subdomains="abcd"
           eventHandlers={{
             tileerror: () => setTilesFailed(true),
             tileload: () => setTilesFailed(false),
