@@ -1,5 +1,6 @@
 import { useId, useMemo, useState, type ReactNode } from 'react';
 import {
+  jpyToRubRate,
   shoppingCategories,
   shoppingCheckedAt,
   shoppingDeals,
@@ -21,6 +22,26 @@ const categoryById = new Map(
 
 const rowPrice = (value: string) =>
   value.replace(/^(около|примерно)\s+/i, '').replace(/\s+за импорт$/i, '');
+
+const roundRub = (value: number) => {
+  if (value < 1000) return Math.round(value / 10) * 10;
+  if (value < 10000) return Math.round(value / 100) * 100;
+  return Math.round(value / 500) * 500;
+};
+
+const formatRub = (value: number) => value.toLocaleString('ru-RU');
+
+// Парсит иены из строки (включая диапазоны «¥1,320-1,540») и переводит в рубли по курсу ЦБ.
+const yenToRub = (japanPrice: string): string | null => {
+  const match = japanPrice.match(/¥\s*([\d,]+)(?:\s*[-–]\s*([\d,]+))?/);
+  if (!match) return null;
+  const toRub = (yen: string) => roundRub(Number(yen.replace(/,/g, '')) * jpyToRubRate);
+  const low = toRub(match[1]);
+  const high = match[2] ? toRub(match[2]) : null;
+  return high && high !== low
+    ? `≈ ${formatRub(low)}–${formatRub(high)} ₽`
+    : `≈ ${formatRub(low)} ₽`;
+};
 
 const dealRules = [
   {
@@ -106,6 +127,9 @@ export default function ShoppingDeals() {
         <p className="text-xs leading-snug text-slate-500">
           Что туристу из РФ выгоднее брать в Японии по маршруту Осака → Киото → Токио.
           Цены ориентировочные — финальную сверяй в день покупки.
+        </p>
+        <p className="text-[11px] leading-snug text-slate-400">
+          Рубли в скобках — пересчёт по курсу ЦБ (100 ¥ ≈ {Math.round(jpyToRubRate * 100)} ₽) на {shoppingCheckedAt}.
         </p>
       </header>
 
@@ -287,6 +311,7 @@ function DealRow({ deal }: DealRowProps) {
   const [open, setOpen] = useState(false);
   const panelId = useId();
   const category = categoryById.get(deal.category);
+  const japanRub = yenToRub(deal.japanPrice);
 
   return (
     <li>
@@ -327,6 +352,11 @@ function DealRow({ deal }: DealRowProps) {
             <span className="max-w-full truncate text-[11px] font-bold leading-tight text-emerald-700 tabular-nums">
               {rowPrice(deal.japanPrice)}
             </span>
+            {japanRub && (
+              <span className="max-w-full truncate text-[10px] font-semibold leading-tight text-emerald-600 tabular-nums">
+                {japanRub}
+              </span>
+            )}
             <span className="max-w-full truncate text-[10px] leading-tight text-slate-400 line-through tabular-nums">
               {rowPrice(deal.worldPrice)}
             </span>
@@ -414,7 +444,7 @@ function DealDetails({ deal, category, panelId }: DealDetailsProps) {
 
       <div className="mb-2 grid grid-cols-2 gap-2">
         <PriceBox label="Средняя РФ / мир" value={deal.worldPrice} />
-        <PriceBox label="В Японии" value={deal.japanPrice} strong />
+        <PriceBox label="В Японии" value={deal.japanPrice} hint={yenToRub(deal.japanPrice)} strong />
       </div>
 
       <p className="text-xs leading-relaxed text-slate-600">{deal.description}</p>
@@ -459,10 +489,11 @@ function DealDetails({ deal, category, panelId }: DealDetailsProps) {
 interface PriceBoxProps {
   label: string;
   value: string;
+  hint?: string | null;
   strong?: boolean;
 }
 
-function PriceBox({ label, value, strong = false }: PriceBoxProps) {
+function PriceBox({ label, value, hint, strong = false }: PriceBoxProps) {
   return (
     <div
       className={`rounded-lg border px-3 py-2 ${
@@ -475,6 +506,11 @@ function PriceBox({ label, value, strong = false }: PriceBoxProps) {
       <p className={`mt-1 break-words text-sm leading-snug ${strong ? 'font-extrabold text-emerald-950' : 'font-semibold text-slate-800'}`}>
         {value}
       </p>
+      {hint && (
+        <p className={`mt-0.5 text-xs font-semibold tabular-nums ${strong ? 'text-emerald-700' : 'text-slate-500'}`}>
+          {hint}
+        </p>
+      )}
     </div>
   );
 }

@@ -47,6 +47,9 @@ export interface ShoppingSource {
 
 export const shoppingCheckedAt = '8 июня 2026';
 
+// JPY→RUB по курсу ЦБ РФ на дату сверки (100 ¥ = 45.93 ₽). Обновляй вместе с shoppingCheckedAt.
+export const jpyToRubRate = 0.46;
+
 export const shoppingCategories: ShoppingCategoryMeta[] = [
   { id: 'beauty', icon: '💄', label: 'Косметика' },
   { id: 'health', icon: '🧴', label: 'Аптека' },
