@@ -15,6 +15,12 @@ interface MoreLink {
 
 const MORE_LINKS: MoreLink[] = [
   {
+    to: '/events',
+    icon: '🎤',
+    title: 'События',
+    description: 'Концерты, выставки, matsuri и спорт по датам.',
+  },
+  {
     to: '/bookings',
     icon: '🎫',
     title: 'Брони и билеты',
@@ -133,7 +139,7 @@ export default function MoreMenu({ onSearch, variant = 'header' }: MoreMenuProps
                   to={item.to}
                   end
                   onClick={close}
-                  className="focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+                  className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
                 >
                   {({ isActive }) => (
                     <span
