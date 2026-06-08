@@ -39,6 +39,12 @@ const MORE_LINKS: MoreLink[] = [
     description: 'Suica, PASMO, ICOCA и mobile-варианты.',
   },
   {
+    to: '/shopping-deals',
+    icon: '🛍️',
+    title: 'Выгодно купить',
+    description: 'Косметика, техника, хобби и сервисы в Японии.',
+  },
+  {
     to: '/emergency',
     icon: '🚨',
     title: 'SOS',

@@ -13,6 +13,7 @@ import Preflight from './pages/Preflight';
 import Trust from './pages/Trust';
 import Emergency from './pages/Emergency';
 import IcCards from './pages/IcCards';
+import ShoppingDeals from './pages/ShoppingDeals';
 
 export default function App() {
   return (
@@ -61,6 +62,7 @@ function Shell() {
           <Route path="/trust" element={<Trust />} />
           <Route path="/emergency" element={<Emergency />} />
           <Route path="/ic-cards" element={<IcCards />} />
+          <Route path="/shopping-deals" element={<ShoppingDeals />} />
           <Route path="/:city" element={<CityPage />} />
           <Route path="/:city/:slug" element={<PlaceDetail />} />
         </Routes>
