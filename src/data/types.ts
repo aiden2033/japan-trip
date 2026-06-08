@@ -1,7 +1,8 @@
 export type Tag =
   | 'morning' | 'food' | 'temple-shrine' | 'nature' | 'view'
   | 'shopping' | 'nightlife' | 'museum' | 'walk' | 'day-trip'
-  | 'castle' | 'tickets-ahead' | 'low-mobility' | 'cafe' | 'anime';
+  | 'castle' | 'tickets-ahead' | 'low-mobility' | 'cafe' | 'anime'
+  | 'nastya-rec';
 
 export type CityId = 'osaka' | 'kyoto' | 'tokyo' | 'other';
 

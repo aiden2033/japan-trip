@@ -16,6 +16,7 @@ export const TAG_LABELS: Record<Tag, string> = {
   'low-mobility': '🧘 без подъёмов',
   cafe: '☕ кофе',
   anime: '🎎 аниме',
+  'nastya-rec': '💬 от Насти',
 };
 
 export interface CityAccent {

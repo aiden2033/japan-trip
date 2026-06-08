@@ -274,7 +274,7 @@ export const preflightGroups: PreflightGroup[] = [
         id: 'hotel-flight-audit',
         title: 'Сверить перелёты и отели',
         details:
-          'Проверить написание имени, даты, аэропорты, нормы багажа, check-in окна, late arrival note и дедлайны бесплатной отмены.',
+          'Проверить написание имени, даты, аэропорты, нормы багажа, check-in окна, late arrival note и дедлайны бесплатной отмены. От Насти: в Японии явно выбирать non-smoking room — курящие номера могут быть очень прокуренными.',
         timing: 'За 2 недели',
         priority: 'important',
       },
@@ -282,7 +282,7 @@ export const preflightGroups: PreflightGroup[] = [
         id: 'shinkansen-tickets',
         title: 'Купить или запланировать синкансэн',
         details:
-          'Для Osaka/Kyoto/Tokyo выбрать SmartEX или покупку на станции. Если везёшь крупный чемодан, заранее смотреть места с oversized luggage area.',
+          'Для Osaka/Kyoto/Tokyo выбрать SmartEX или покупку на станции. Если хочешь шанс на Фудзи на Tokaido Shinkansen, при брони смотри Fuji-facing side — обычно D/E, но проверяй направление и схему состава. Если везёшь крупный чемодан, заранее смотреть места с oversized luggage area.',
         timing: 'За 1-4 недели',
         priority: 'important',
         sourceLinks: [
@@ -364,7 +364,7 @@ export const preflightGroups: PreflightGroup[] = [
         id: 'luggage-forwarding',
         title: 'Запланировать takkyubin',
         details:
-          'Между городами отправлять чемодан hotel-to-hotel через Yamato/аналог, если отели принимают доставку. Проверить адрес, дату доставки и cut-off time на ресепшене.',
+          'Между городами отправлять чемодан hotel-to-hotel через Yamato/аналог, если отели принимают доставку. От Насти: сдавать багаж можно не только в отеле, но и через конбини вроде 7-Eleven/Lawson; доставка в другой город обычно занимает день-два. Проверить адрес, дату доставки и cut-off time.',
         timing: 'Перед каждым переездом',
         priority: 'important',
         sourceLinks: [
@@ -381,6 +381,14 @@ export const preflightGroups: PreflightGroup[] = [
         sourceLinks: [
           { label: 'SmartEX luggage', url: 'https://smart-ex.jp/en/reservation/reserve_smart/sp/', kind: 'official' },
         ],
+      },
+      {
+        id: 'return-luggage-space',
+        title: 'Оставить место под покупки',
+        details:
+          'От Насти: одежда, сувениры, сладости и матча быстро забивают чемодан. Сразу заложить свободный объём, складную сумку или отдельный чемодан на обратный путь, особенно если планируются tax-free shopping-дни.',
+        timing: 'До упаковки',
+        priority: 'important',
       },
       {
         id: 'weather-pack',
