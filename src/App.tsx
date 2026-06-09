@@ -15,6 +15,7 @@ import Emergency from './pages/Emergency';
 import IcCards from './pages/IcCards';
 import ShoppingDeals from './pages/ShoppingDeals';
 import Events from './pages/Events';
+import Calendar from './pages/Calendar';
 
 export default function App() {
   return (
@@ -65,6 +66,7 @@ function Shell() {
           <Route path="/ic-cards" element={<IcCards />} />
           <Route path="/shopping-deals" element={<ShoppingDeals />} />
           <Route path="/events" element={<Events />} />
+          <Route path="/calendar" element={<Calendar />} />
           <Route path="/:city" element={<CityPage />} />
           <Route path="/:city/:slug" element={<PlaceDetail />} />
         </Routes>

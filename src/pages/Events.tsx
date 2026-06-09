@@ -59,8 +59,11 @@ const formatDateHeading = (date: string) =>
     weekday: 'short',
   }).format(new Date(`${date}T12:00:00+09:00`));
 
-const eventTime = (event: TripEvent) =>
-  event.time ? event.time : event.dateEnd ? event.dateLabel : 'время уточнить';
+const eventTime = (event: TripEvent) => {
+  if (event.time) return event.time;
+  if (event.dateEnd) return ''; // многодневное: единого времени нет, не дублируем диапазон дат
+  return 'время уточнить';
+};
 
 const cityMatches = (event: TripEvent, city: CityFilter) => {
   if (city === 'all') return true;
@@ -254,7 +257,7 @@ function CityChip({ active, label, onClick }: CityChipProps) {
       type="button"
       aria-pressed={active}
       onClick={onClick}
-      className={`inline-flex min-h-[40px] shrink-0 items-center rounded-full border px-3 text-xs font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 ${
+      className={`inline-flex min-h-[44px] shrink-0 items-center rounded-full border px-3 text-xs font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 ${
         active
           ? 'border-emerald-600 bg-emerald-50 text-emerald-800'
           : 'border-slate-200 bg-white text-slate-600 active:bg-slate-100'
@@ -306,14 +309,22 @@ function EventCard({ event }: EventCardProps) {
       </div>
 
       <div className="grid grid-cols-2 gap-px border-y border-slate-100 bg-slate-100 text-xs">
-        <InfoCell label="Дата" value={`${event.dateLabel} · ${eventTime(event)}`} />
+        <InfoCell
+          label="Дата"
+          value={eventTime(event) ? `${event.dateLabel} · ${eventTime(event)}` : event.dateLabel}
+        />
         <InfoCell label="Город" value={event.city} hint={event.area} />
         <InfoCell label="Площадка" value={event.venue} />
         <InfoCell label="Цена" value={event.price ?? 'уточнить'} strong />
       </div>
 
       <div className="flex flex-col gap-2 p-3">
-        <p className="text-xs font-semibold leading-relaxed text-slate-600">
+        {event.gist && (
+          <p className="text-[13px] font-medium leading-snug text-slate-700">
+            {event.gist}
+          </p>
+        )}
+        <p className="text-xs font-semibold leading-relaxed text-slate-500">
           {event.style}
         </p>
         {event.note && (
@@ -326,7 +337,7 @@ function EventCard({ event }: EventCardProps) {
           href={event.sourceUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex min-h-[40px] w-fit max-w-full items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 text-xs font-bold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+          className="inline-flex min-h-[44px] w-fit max-w-full items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 text-xs font-bold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
         >
           <span className="truncate">{event.sourceLabel}</span>
           <span className="shrink-0 text-[11px] font-semibold text-slate-400">

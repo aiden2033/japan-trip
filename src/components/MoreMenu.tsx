@@ -15,6 +15,12 @@ interface MoreLink {
 
 const MORE_LINKS: MoreLink[] = [
   {
+    to: '/calendar',
+    icon: '📅',
+    title: 'Календарь поездки',
+    description: 'По дням: прилёт, вылет и планы поездки.',
+  },
+  {
     to: '/events',
     icon: '🎤',
     title: 'События',
