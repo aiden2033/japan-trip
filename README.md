@@ -84,11 +84,11 @@ Keep official links first, then add known partner platforms such as Klook, Trip.
 
 ## Add real photos / Добавить настоящие фото
 
-1. Drop an image into the city subfolder **`public/photos/<city>/`** (`osaka` / `kyoto` / `tokyo`). Any web format works — `.jpg`, `.jpeg`, `.webp`, `.avif`. Name it after the place, e.g. `public/photos/kyoto/fushimi-inari.jpg`.
+1. Drop an image into the city subfolder **`public/photos/<city>/`** (`osaka` / `kyoto` / `tokyo`). Any web format works — `.jpg`, `.jpeg`, `.webp`, `.avif`. Name it after the place, e.g. `public/photos/kyoto/fushimi_inari.jpg`.
 2. Set the `photo` field on that place in `src/data/places.ts` to the path **relative to `public/`, without a leading slash**, including the real extension:
 
    ```ts
-   photo: 'photos/kyoto/fushimi-inari.jpg',
+   photo: 'photos/kyoto/fushimi_inari.jpg',
    ```
 
    The component prepends `import.meta.env.BASE_URL`, so the path resolves correctly both locally and on a GitHub Pages project subpath — do **not** add a leading `/` or `./`.
