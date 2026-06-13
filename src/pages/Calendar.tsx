@@ -24,6 +24,18 @@ const categoryMeta: Record<
   note: { icon: '📝', chip: 'border-slate-200 bg-slate-50 text-slate-700', accentCard: false },
 };
 
+// Logical order of events within a single day: arrival/transfer first,
+// then hotel check-in, then activities/food, then loose notes.
+const categoryRank: Record<TripDayEventCategory, number> = {
+  flight: 0,
+  transport: 1,
+  hotel: 2,
+  activity: 3,
+  food: 3,
+  event: 3,
+  note: 4,
+};
+
 const atNoon = (date: string) => new Date(`${date}T12:00:00+09:00`);
 
 const weekdayShort = (date: string) =>
@@ -75,8 +87,15 @@ export default function Calendar() {
       list.push(event);
       map.set(event.date, list);
     });
+    // Stable sort keeps the authoring order from `tripDayEvents` as the final
+    // tie-breaker, so same-category events stay in the order they were written.
     map.forEach((list) =>
-      list.sort((a, b) => (a.time ?? '').localeCompare(b.time ?? '') || a.title.localeCompare(b.title)),
+      list.sort((a, b) => {
+        const byCategory = categoryRank[a.category] - categoryRank[b.category];
+        if (byCategory !== 0) return byCategory;
+        if (a.time && b.time) return a.time.localeCompare(b.time);
+        return 0;
+      }),
     );
     return map;
   }, []);
