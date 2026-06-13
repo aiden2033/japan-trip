@@ -40,10 +40,36 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
 }
 
+.city-pin-shell {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.city-pin-emoji {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  z-index: 1;
+  transform: translate(-50%, -50%);
+  font-size: var(--pin-emoji-size, 13px);
+  line-height: 1;
+  pointer-events: none;
+  text-shadow:
+    0 1px 2px rgba(255, 255, 255, 0.9),
+    0 1px 2px rgba(0, 0, 0, 0.45);
+}
+
 .city-pin--dim {
   opacity: 0.5;
   filter: grayscale(0.4);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.city-pin--dim + .city-pin-emoji {
+  opacity: 0.72;
+  filter: grayscale(0.2);
 }
 
 .city-pin-wrapper:focus-visible {

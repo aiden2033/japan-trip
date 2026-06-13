@@ -27,6 +27,9 @@ interface CityMapProps {
 
 const USER_BOUNDS_RADIUS_KM = 50;
 const FRIENDS_DEDUPE_RADIUS_KM = 0.075;
+const FOOD_PIN_EMOJI = '🍜';
+const FRIENDS_FOOD_PATTERN =
+  /\b(?:arabica|coffee|cafe|shokupan|bakery|ramen|sushi|restaurant|izakaya|yakitori|yakiniku|soba|udon|tempura|tonkatsu|matcha|mochi|dessert|tea|hario)\b|коф|кафе|ресторан|булоч|слад|кекс|матча|еда/i;
 
 interface AccessibleMarkerProps {
   children: ReactNode;
@@ -184,6 +187,18 @@ const markerLabel = (place: Place): string => {
   return place.isDayTrip ? `${label}, выездной пункт` : label;
 };
 
+const foodEmojiForPlace = (place: Place): string | undefined =>
+  place.foodSpot || place.tags.some((tag) => tag === 'food' || tag === 'cafe')
+    ? FOOD_PIN_EMOJI
+    : undefined;
+
+const foodEmojiForFriendsPlace = (place: FriendsMapPlace): string | undefined => {
+  const foodText = `${place.name} ${place.note ?? ''}`;
+  return FRIENDS_FOOD_PATTERN.test(foodText) ? FOOD_PIN_EMOJI : undefined;
+};
+
+const isNastyaPlace = (place: Place): boolean => place.tags.includes('nastya-rec');
+
 const routeLinkTitle = (totalPoints: number, routePoints: number): string => {
   if (totalPoints === 1) return 'Открыть единственную видимую точку в Google Maps';
   if (totalPoints > routePoints) {
@@ -294,7 +309,13 @@ export default function CityMap({
           <AccessibleMarker
             key={placeKey(p)}
             position={[p.coords!.lat, p.coords!.lng]}
-            icon={placeIcon(city, Boolean(p.isDayTrip), visited.has(p))}
+            icon={placeIcon(
+              city,
+              Boolean(p.isDayTrip),
+              visited.has(p),
+              foodEmojiForPlace(p),
+              isNastyaPlace(p),
+            )}
             label={markerLabel(p)}
             keyboard
           >
@@ -307,7 +328,7 @@ export default function CityMap({
           <AccessibleMarker
             key={p.id}
             position={[p.coords.lat, p.coords.lng]}
-            icon={friendsPlaceIcon()}
+            icon={friendsPlaceIcon(foodEmojiForFriendsPlace(p))}
             label={`${p.name}, точка из Google Maps списка`}
             keyboard
           >
