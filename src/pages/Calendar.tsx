@@ -266,6 +266,21 @@ function EventRow({ event }: EventRowProps) {
         {event.detail && (
           <p className="mt-0.5 text-xs leading-snug text-slate-500">{event.detail}</p>
         )}
+        {event.links && event.links.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {event.links.map((link) => (
+              <a
+                key={link.url}
+                href={link.url}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-semibold text-slate-700 underline-offset-2 hover:border-slate-300 hover:bg-white hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+        )}
         {event.city && (
           <span
             className={`mt-1 inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-semibold ${meta.chip}`}

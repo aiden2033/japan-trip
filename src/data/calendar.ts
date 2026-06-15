@@ -18,6 +18,7 @@ export interface TripDayEvent {
   detail?: string;
   city?: string;
   category: TripDayEventCategory;
+  links?: { label: string; url: string }[];
 }
 
 export const tripStartDate = '2026-08-29';
@@ -162,10 +163,18 @@ export const tripDayEvents: TripDayEvent[] = [
   {
     id: 'kyoto-checkin',
     date: '2026-09-02',
-    title: 'Заселение в Киото (4 ночи)',
-    detail: 'База до 6 сентября.',
+    title: 'Заселение: Yadoya Hiraiwa private ryokan (4 ночи)',
+    time: '15:00',
+    detail:
+      'Дом в Shimogyo-ku, Hayaocho 314. База до 6 сентября; выезд ориентировочно до 10:00. Перед приездом сверить код/инструкции заезда в Booking.',
     city: 'Киото',
     category: 'hotel',
+    links: [
+      {
+        label: 'Booking',
+        url: 'https://www.booking.com/hotel/jp/yadoya-hiraiwa-private-ryokan.ru.html',
+      },
+    ],
   },
   {
     id: 'fushimi-inari',
@@ -269,7 +278,7 @@ export const tripDayEvents: TripDayEvent[] = [
     date: '2026-09-06',
     title: 'Синкансэн Киото → Токио',
     detail:
-      'Hikari ~2:40 (Nozomi ~2:15). Для 14-16 чел брони мест делать заранее через Smart-EX одним заказом, чтобы сидеть вместе. Фудзи видно справа по ходу (места D/E) — проверить направление.',
+      'Перед поездом выезд из Yadoya Hiraiwa: проверить ключи, багаж и правила дома. Hikari ~2:40 (Nozomi ~2:15). Для 14-16 чел брони мест делать заранее через Smart-EX одним заказом, чтобы сидеть вместе. Фудзи видно справа по ходу (места D/E) — проверить направление.',
     city: 'Токио',
     category: 'transport',
   },
