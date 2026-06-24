@@ -129,7 +129,8 @@ export default function Calendar() {
 
         <p className="text-sm leading-relaxed text-slate-600">
           {`${dayNumber(tripStartDate)} ${monthShort(tripStartDate)} — ${dayNumber(tripEndDate)} ${monthShort(tripEndDate)} 2026`}.
-          Прилёт и вылет уже отмечены, остальные дни заполняем по ходу планирования.
+          Осака и Киото расписаны по дням, а токийская неделя оставлена гибкой для
+          маршрутов по интересам.
         </p>
       </header>
 
