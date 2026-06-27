@@ -79,34 +79,20 @@ function AccessibleMarker({
 function FriendsFitBounds({
   activePlaceKey,
   points,
+  resetKey,
   userPoint,
 }: {
   activePlaceKey?: string;
   points: Array<{ city?: CityId; id?: string; slug?: string; coords?: LatLng }>;
+  resetKey: string;
   userPoint: LatLng | null;
 }) {
   const map = useMap();
-  const key = points
-    .filter((p) => p.coords)
-    .map((p) => p.id ?? p.slug ?? `${p.coords!.lat},${p.coords!.lng}`)
-    .sort()
-    .join(',');
-  const userKey = userPoint ? `${userPoint.lat.toFixed(3)},${userPoint.lng.toFixed(3)}` : '';
+  const lastFitResetKey = useRef<string | null>(null);
 
   useEffect(() => {
-    const activePoint = activePlaceKey
-      ? points.find(
-          (p) =>
-            p.city &&
-            p.slug &&
-            p.coords &&
-            placeKey({ city: p.city, slug: p.slug }) === activePlaceKey,
-        )
-      : undefined;
-    if (activePoint?.coords) {
-      map.setView([activePoint.coords.lat, activePoint.coords.lng], ACTIVE_PLACE_ZOOM);
-      return;
-    }
+    if (lastFitResetKey.current === resetKey) return;
+    lastFitResetKey.current = resetKey;
 
     const coords: [number, number][] = points
       .filter((p) => p.coords)
@@ -118,7 +104,21 @@ function FriendsFitBounds({
       return;
     }
     map.fitBounds(L.latLngBounds(coords), { padding: [48, 48], maxZoom: 14 });
-  }, [activePlaceKey, key, userKey, map, points, userPoint]);
+  }, [map, points, resetKey, userPoint]);
+
+  useEffect(() => {
+    if (!activePlaceKey) return;
+    const activePoint = points.find(
+      (p) =>
+        p.city &&
+        p.slug &&
+        p.coords &&
+        placeKey({ city: p.city, slug: p.slug }) === activePlaceKey,
+    );
+    if (activePoint?.coords) {
+      map.setView([activePoint.coords.lat, activePoint.coords.lng], ACTIVE_PLACE_ZOOM);
+    }
+  }, [activePlaceKey, map, points]);
 
   return null;
 }
@@ -313,6 +313,7 @@ export default function CityMap({
         <FriendsFitBounds
           activePlaceKey={activePlaceKey}
           points={mapFitPoints}
+          resetKey={city}
           userPoint={nearUser}
         />
         {nearUser && (
