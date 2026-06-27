@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { lazy, Suspense, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import type { CityId } from '../data/types';
 import { places } from '../data/places';
@@ -14,6 +14,8 @@ import TagChip from '../components/TagChip';
 import IncompatibleNote from '../components/IncompatibleNote';
 import NavHandoff from '../components/NavHandoff';
 import BookingActions from '../components/BookingActions';
+
+const CityMap = lazy(() => import('../components/CityMap'));
 
 const CITY_IDS: CityId[] = ['osaka', 'kyoto', 'tokyo', 'other'];
 
@@ -47,7 +49,20 @@ export default function PlaceDetail() {
 
   const accent = CITY_ACCENT[place.city];
   const goBack = () => navigate(`/${cityMeta.id}`);
+  const openPlace = (nextSlug: string) => navigate(`/${cityMeta.id}/${nextSlug}`);
   const booking = bookingByPlaceKey.get(placeKey(place));
+  const sameCityPlaces = useMemo(
+    () => places.filter((p) => p.city === place.city),
+    [place.city],
+  );
+  const cityMapPlaces = useMemo(
+    () => sameCityPlaces.filter((p) => !p.isDayTrip),
+    [sameCityPlaces],
+  );
+  const cityDayTripPlaces = useMemo(
+    () => sameCityPlaces.filter((p) => p.isDayTrip),
+    [sameCityPlaces],
+  );
 
   const nearby = place.coords
     ? nearbyPlaces(place.coords, places, {
@@ -180,6 +195,23 @@ export default function PlaceDetail() {
         name={place.nameRu}
         transport={place.transport}
       />
+
+      {place.coords && (
+        <section className="flex flex-col gap-2">
+          <h2 className="text-sm font-bold text-slate-900">🗺 На карте</h2>
+          <Suspense
+            fallback={<div className="h-[60vh] animate-pulse rounded-2xl bg-slate-100" />}
+          >
+            <CityMap
+              city={place.city}
+              cityPlaces={cityMapPlaces}
+              dayTripPlaces={cityDayTripPlaces}
+              activePlaceKey={placeKey(place)}
+              onOpen={openPlace}
+            />
+          </Suspense>
+        </section>
+      )}
 
       {place.nameJa && (
         <div className="flex flex-col gap-2">

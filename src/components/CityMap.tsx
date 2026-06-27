@@ -19,6 +19,7 @@ interface CityMapProps {
   city: CityId;
   cityPlaces: Place[];
   dayTripPlaces: Place[];
+  activePlaceKey?: string;
   friendsPlaces?: FriendsMapPlace[];
   showFriendsPlaces?: boolean;
   onOpen: (slug: string) => void;
@@ -211,6 +212,7 @@ export default function CityMap({
   city,
   cityPlaces,
   dayTripPlaces,
+  activePlaceKey,
   friendsPlaces = [],
   showFriendsPlaces = false,
   onOpen,
@@ -305,25 +307,28 @@ export default function CityMap({
             </Popup>
           </AccessibleMarker>
         )}
-        {visiblePoints.map((p) => (
-          <AccessibleMarker
-            key={placeKey(p)}
-            position={[p.coords!.lat, p.coords!.lng]}
-            icon={placeIcon(
-              city,
-              Boolean(p.isDayTrip),
-              visited.has(p),
-              foodEmojiForPlace(p),
-              isNastyaPlace(p),
-            )}
-            label={markerLabel(p)}
-            keyboard
-          >
-            <Popup minWidth={208} maxWidth={224}>
-              <MapPopupCard place={p} onOpen={onOpen} />
-            </Popup>
-          </AccessibleMarker>
-        ))}
+        {visiblePoints.map((p) => {
+          const isActive = placeKey(p) === activePlaceKey;
+          return (
+            <AccessibleMarker
+              key={placeKey(p)}
+              position={[p.coords!.lat, p.coords!.lng]}
+              icon={placeIcon(city, Boolean(p.isDayTrip), {
+                active: isActive,
+                dimmed: visited.has(p),
+                emoji: foodEmojiForPlace(p),
+                isNastya: isNastyaPlace(p),
+              })}
+              label={isActive ? `${markerLabel(p)}, текущая точка` : markerLabel(p)}
+              keyboard
+              zIndexOffset={isActive ? 1500 : undefined}
+            >
+              <Popup minWidth={208} maxWidth={224}>
+                <MapPopupCard place={p} onOpen={onOpen} />
+              </Popup>
+            </AccessibleMarker>
+          );
+        })}
         {friendsVisiblePoints.map((p) => (
           <AccessibleMarker
             key={p.id}
