@@ -58,12 +58,35 @@ export default function CityPage() {
   const activeSort = sortByDistance && Boolean(position);
 
   const mainPlaces = useMemo(
-    () => orderPlaces(regularPlaces.filter((p) => !p.foodSpot), visitedItems, activeSort, distanceFor),
+    () =>
+      orderPlaces(
+        regularPlaces.filter((p) => !p.foodSpot && !isNastyaRecommendation(p)),
+        visitedItems,
+        activeSort,
+        distanceFor,
+      ),
     [regularPlaces, visitedItems, activeSort, distanceFor],
   );
 
   const cafePlaces = useMemo(
-    () => orderPlaces(regularPlaces.filter((p) => p.foodSpot), visitedItems, activeSort, distanceFor),
+    () =>
+      orderPlaces(
+        regularPlaces.filter((p) => p.foodSpot && !isNastyaRecommendation(p)),
+        visitedItems,
+        activeSort,
+        distanceFor,
+      ),
+    [regularPlaces, visitedItems, activeSort, distanceFor],
+  );
+
+  const nastyaPlaces = useMemo(
+    () =>
+      orderPlaces(
+        regularPlaces.filter(isNastyaRecommendation),
+        visitedItems,
+        activeSort,
+        distanceFor,
+      ),
     [regularPlaces, visitedItems, activeSort, distanceFor],
   );
 
@@ -77,7 +100,10 @@ export default function CityPage() {
     [dayTripPlaces],
   );
 
-  const mapCityPlaces = useMemo(() => [...mainPlaces, ...cafePlaces], [mainPlaces, cafePlaces]);
+  const mapCityPlaces = useMemo(
+    () => [...mainPlaces, ...cafePlaces, ...nastyaPlaces],
+    [mainPlaces, cafePlaces, nastyaPlaces],
+  );
 
   const cityFriendsMapPlaces = useMemo(
     () => (isCityId(city) ? friendsMapPlaces.filter((p) => p.city === city) : []),
@@ -259,24 +285,9 @@ export default function CityPage() {
           />
         </Suspense>
       ) : (
-      <>
-      <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {mainPlaces.map((place) => (
-          <PlaceCard
-            key={place.slug}
-            place={place}
-            places={places}
-            onOpen={openPlace}
-            distanceKm={activeSort ? distanceFor(place) : undefined}
-          />
-        ))}
-      </section>
-
-      {cafePlaces.length > 0 && (
-        <section className="flex flex-col gap-2">
-          <h2 className="text-sm font-bold text-slate-800">🍴 Еда, кафе и бары</h2>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {cafePlaces.map((place) => (
+        <>
+          <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {mainPlaces.map((place) => (
               <PlaceCard
                 key={place.slug}
                 place={place}
@@ -285,55 +296,87 @@ export default function CityPage() {
                 distanceKm={activeSort ? distanceFor(place) : undefined}
               />
             ))}
-          </div>
-        </section>
-      )}
-
-      {regularPlaces.length === 0 && dayTripPlaces.length === 0 && (
-        <p className="text-sm text-slate-500">
-          Ничего не найдено под выбранные теги. Сбрось фильтр.
-        </p>
-      )}
-
-      {groupsForCity.map((group) => {
-        const groupPlaces = orderPlaces(
-          dayTripPlaces.filter((p) => p.dayTripGroup === group.id),
-          visitedItems,
-          activeSort,
-          distanceFor,
-        );
-        if (groupPlaces.length === 0) return null;
-        return (
-          <section
-            key={group.id}
-            className="rounded-2xl border-2 border-dashed border-amber-300 bg-amber-50/50 p-3"
-          >
-            <h2 className="text-sm font-bold text-amber-800">🚆 {group.label}</h2>
-            {group.note && (
-              <p className="mt-1 text-xs text-amber-700">{group.note}</p>
-            )}
-            <p className="mt-1 text-xs font-medium text-amber-700">
-              Выбери один на день — взаимоисключающие варианты.
-            </p>
-            <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {groupPlaces.map((place) => (
-                <PlaceCard
-                  key={place.slug}
-                  place={place}
-                  places={places}
-                  onOpen={openPlace}
-                  distanceKm={activeSort ? distanceFor(place) : undefined}
-                />
-              ))}
-            </div>
           </section>
-        );
-      })}
-      </>
+
+          {cafePlaces.length > 0 && (
+            <Collapsible title={`🍴 Еда, кафе и бары · ${cafePlaces.length}`} defaultCollapsed>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {cafePlaces.map((place) => (
+                  <PlaceCard
+                    key={place.slug}
+                    place={place}
+                    places={places}
+                    onOpen={openPlace}
+                    distanceKm={activeSort ? distanceFor(place) : undefined}
+                  />
+                ))}
+              </div>
+            </Collapsible>
+          )}
+
+          {nastyaPlaces.length > 0 && (
+            <Collapsible title={`⭐ Рекомендации от Насти · ${nastyaPlaces.length}`} defaultCollapsed>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {nastyaPlaces.map((place) => (
+                  <PlaceCard
+                    key={place.slug}
+                    place={place}
+                    places={places}
+                    onOpen={openPlace}
+                    distanceKm={activeSort ? distanceFor(place) : undefined}
+                  />
+                ))}
+              </div>
+            </Collapsible>
+          )}
+
+          {regularPlaces.length === 0 && dayTripPlaces.length === 0 && (
+            <p className="text-sm text-slate-500">
+              Ничего не найдено под выбранные теги. Сбрось фильтр.
+            </p>
+          )}
+
+          {groupsForCity.map((group) => {
+            const groupPlaces = orderPlaces(
+              dayTripPlaces.filter((p) => p.dayTripGroup === group.id),
+              visitedItems,
+              activeSort,
+              distanceFor,
+            );
+            if (groupPlaces.length === 0) return null;
+            return (
+              <section
+                key={group.id}
+                className="rounded-2xl border-2 border-dashed border-amber-300 bg-amber-50/50 p-3"
+              >
+                <h2 className="text-sm font-bold text-amber-800">🚆 {group.label}</h2>
+                {group.note && (
+                  <p className="mt-1 text-xs text-amber-700">{group.note}</p>
+                )}
+                <p className="mt-1 text-xs font-medium text-amber-700">
+                  Выбери один на день — взаимоисключающие варианты.
+                </p>
+                <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                  {groupPlaces.map((place) => (
+                    <PlaceCard
+                      key={place.slug}
+                      place={place}
+                      places={places}
+                      onOpen={openPlace}
+                      distanceKm={activeSort ? distanceFor(place) : undefined}
+                    />
+                  ))}
+                </div>
+              </section>
+            );
+          })}
+        </>
       )}
     </div>
   );
 }
+
+const isNastyaRecommendation = (place: Place): boolean => place.tags.includes('nastya-rec');
 
 const matchesTags = (place: Place, activeTags: Tag[]): boolean =>
   activeTags.length === 0 || activeTags.every((tag) => place.tags.includes(tag));
