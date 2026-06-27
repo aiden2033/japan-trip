@@ -28,7 +28,9 @@ export default function CityPage() {
   const [activeTags, setActiveTags] = useState<Tag[]>([]);
   const [view, setView] = useState<'list' | 'map' | 'anime'>('list');
   const [sortByDistance, setSortByDistance] = useState(false);
+  const [showFoodMapPlaces, setShowFoodMapPlaces] = useState(false);
   const [showFriendsMapPlaces, setShowFriendsMapPlaces] = useState(false);
+  const [showNastyaMapPlaces, setShowNastyaMapPlaces] = useState(false);
   const visited = useVisited();
   const visitedItems = visited.items;
   const geo = useGeolocation();
@@ -101,8 +103,12 @@ export default function CityPage() {
   );
 
   const mapCityPlaces = useMemo(
-    () => [...mainPlaces, ...cafePlaces, ...nastyaPlaces],
-    [mainPlaces, cafePlaces, nastyaPlaces],
+    () => [
+      ...mainPlaces,
+      ...(showFoodMapPlaces ? cafePlaces : []),
+      ...(showNastyaMapPlaces ? nastyaPlaces : []),
+    ],
+    [cafePlaces, mainPlaces, nastyaPlaces, showFoodMapPlaces, showNastyaMapPlaces],
   );
 
   const cityFriendsMapPlaces = useMemo(
@@ -122,6 +128,8 @@ export default function CityPage() {
     } else {
       setShowFriendsMapPlaces(false);
     }
+    setShowFoodMapPlaces(false);
+    setShowNastyaMapPlaces(false);
   }, [cityMeta?.id]);
 
   if (!cityMeta) {
@@ -238,6 +246,42 @@ export default function CityPage() {
           >
             {geo.status === 'locating' ? '📍 Определяю…' : '📍 Рядом со мной'}
           </button>
+        )}
+
+        {view === 'map' && cafePlaces.length > 0 && (
+          <label
+            className={`inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-full px-4 text-sm font-semibold transition focus-within:ring-2 focus-within:ring-rose-400 ${
+              showFoodMapPlaces
+                ? 'bg-rose-600 text-white shadow'
+                : 'bg-slate-100 text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            <input
+              type="checkbox"
+              checked={showFoodMapPlaces}
+              onChange={(event) => setShowFoodMapPlaces(event.target.checked)}
+              className="h-4 w-4 rounded border-slate-300 text-rose-600 focus:ring-rose-400"
+            />
+            <span>Еда · {cafePlaces.length}</span>
+          </label>
+        )}
+
+        {view === 'map' && nastyaPlaces.length > 0 && (
+          <label
+            className={`inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-full px-4 text-sm font-semibold transition focus-within:ring-2 focus-within:ring-amber-400 ${
+              showNastyaMapPlaces
+                ? 'bg-amber-400 text-amber-950 shadow'
+                : 'bg-slate-100 text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            <input
+              type="checkbox"
+              checked={showNastyaMapPlaces}
+              onChange={(event) => setShowNastyaMapPlaces(event.target.checked)}
+              className="h-4 w-4 rounded border-slate-300 text-amber-500 focus:ring-amber-400"
+            />
+            <span>От Насти · {nastyaPlaces.length}</span>
+          </label>
         )}
 
         {view === 'map' && cityFriendsMapPlaces.length > 0 && (
