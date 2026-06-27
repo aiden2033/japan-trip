@@ -4,7 +4,21 @@ import { registerSW } from 'virtual:pwa-register';
 import App from './App';
 import './index.css';
 
-registerSW({ immediate: true });
+const hadServiceWorkerController = Boolean(navigator.serviceWorker?.controller);
+let refreshingForServiceWorkerUpdate = false;
+
+navigator.serviceWorker?.addEventListener('controllerchange', () => {
+  if (!hadServiceWorkerController || refreshingForServiceWorkerUpdate) return;
+  refreshingForServiceWorkerUpdate = true;
+  window.location.reload();
+});
+
+const updateSW = registerSW({
+  immediate: true,
+  onNeedRefresh() {
+    void updateSW(true);
+  },
+});
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

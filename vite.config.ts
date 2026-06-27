@@ -34,6 +34,7 @@ export default defineConfig({
       workbox: {
         // Precache app shell and local trip photos; viewed OSM tiles are cached at runtime (CacheFirst).
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,jpg,jpeg,woff,woff2}'],
+        importScripts: ['sw-reload-clients.js'],
         // Photos can be large; lift the per-file precache cap.
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
         navigateFallback: 'index.html',
