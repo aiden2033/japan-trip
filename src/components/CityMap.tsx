@@ -28,6 +28,7 @@ interface CityMapProps {
 
 const USER_BOUNDS_RADIUS_KM = 50;
 const FRIENDS_DEDUPE_RADIUS_KM = 0.075;
+const ACTIVE_PLACE_ZOOM = 16;
 const FOOD_PIN_EMOJI = '🍜';
 const FRIENDS_FOOD_PATTERN =
   /\b(?:arabica|coffee|cafe|shokupan|bakery|ramen|sushi|restaurant|izakaya|yakitori|yakiniku|soba|udon|tempura|tonkatsu|matcha|mochi|dessert|tea|hario)\b|коф|кафе|ресторан|булоч|слад|кекс|матча|еда/i;
@@ -76,10 +77,12 @@ function AccessibleMarker({
 }
 
 function FriendsFitBounds({
+  activePlaceKey,
   points,
   userPoint,
 }: {
-  points: Array<{ id?: string; slug?: string; coords?: LatLng }>;
+  activePlaceKey?: string;
+  points: Array<{ city?: CityId; id?: string; slug?: string; coords?: LatLng }>;
   userPoint: LatLng | null;
 }) {
   const map = useMap();
@@ -91,6 +94,20 @@ function FriendsFitBounds({
   const userKey = userPoint ? `${userPoint.lat.toFixed(3)},${userPoint.lng.toFixed(3)}` : '';
 
   useEffect(() => {
+    const activePoint = activePlaceKey
+      ? points.find(
+          (p) =>
+            p.city &&
+            p.slug &&
+            p.coords &&
+            placeKey({ city: p.city, slug: p.slug }) === activePlaceKey,
+        )
+      : undefined;
+    if (activePoint?.coords) {
+      map.setView([activePoint.coords.lat, activePoint.coords.lng], ACTIVE_PLACE_ZOOM);
+      return;
+    }
+
     const coords: [number, number][] = points
       .filter((p) => p.coords)
       .map((p) => [p.coords!.lat, p.coords!.lng]);
@@ -101,7 +118,7 @@ function FriendsFitBounds({
       return;
     }
     map.fitBounds(L.latLngBounds(coords), { padding: [48, 48], maxZoom: 14 });
-  }, [key, userKey, map, points, userPoint]);
+  }, [activePlaceKey, key, userKey, map, points, userPoint]);
 
   return null;
 }
@@ -293,7 +310,11 @@ export default function CityMap({
             tileload: () => setTilesFailed(false),
           }}
         />
-        <FriendsFitBounds points={mapFitPoints} userPoint={nearUser} />
+        <FriendsFitBounds
+          activePlaceKey={activePlaceKey}
+          points={mapFitPoints}
+          userPoint={nearUser}
+        />
         {nearUser && (
           <AccessibleMarker
             position={[nearUser.lat, nearUser.lng]}
