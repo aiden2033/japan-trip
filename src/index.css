@@ -61,15 +61,17 @@
     0 1px 2px rgba(0, 0, 0, 0.45);
 }
 
-.city-pin--dim {
-  opacity: 0.5;
-  filter: grayscale(0.4);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+.city-pin--visited {
+  border-width: 2px;
+  box-shadow:
+    0 0 0 2px rgba(34, 197, 94, 0.18),
+    0 1px 3px rgba(21, 128, 61, 0.32);
 }
 
-.city-pin--dim + .city-pin-emoji {
-  opacity: 0.72;
-  filter: grayscale(0.2);
+.city-pin--visited + .city-pin-emoji {
+  text-shadow:
+    0 1px 2px rgba(255, 255, 255, 0.95),
+    0 1px 2px rgba(21, 128, 61, 0.55);
 }
 
 .city-pin--active {

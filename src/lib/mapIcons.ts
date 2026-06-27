@@ -10,6 +10,8 @@ const NASTYA_COLOR = '#facc15';
 const NASTYA_BORDER = '#ca8a04';
 const ACTIVE_COLOR = '#ef4444';
 const ACTIVE_BORDER = '#991b1b';
+const VISITED_COLOR = '#22c55e';
+const VISITED_BORDER = '#15803d';
 
 export const CITY_CENTER: Record<CityId, [number, number]> = {
   osaka: [34.6687, 135.5013],
@@ -21,27 +23,29 @@ export const CITY_CENTER: Record<CityId, [number, number]> = {
 const pinHtml = (
   fill: string,
   border: string,
-  dimmed: boolean,
+  visited: boolean,
   emoji?: string,
   active = false,
 ) =>
-  `<span class="city-pin-shell" style="--pin-emoji-size:${dimmed ? '10px' : active ? '16px' : '13px'}"><span class="city-pin${dimmed ? ' city-pin--dim' : ''}${active ? ' city-pin--active' : ''}" style="--pin-fill:${fill};--pin-border:${border}"></span>${emoji ? `<span class="city-pin-emoji" aria-hidden="true">${emoji}</span>` : ''}</span>`;
+  `<span class="city-pin-shell" style="--pin-emoji-size:${visited ? '10px' : active ? '16px' : '13px'}"><span class="city-pin${visited ? ' city-pin--visited' : ''}${active ? ' city-pin--active' : ''}" style="--pin-fill:${fill};--pin-border:${border}"></span>${emoji ? `<span class="city-pin-emoji" aria-hidden="true">${emoji}</span>` : ''}</span>`;
 
 interface PlaceIconOptions {
   active?: boolean;
-  dimmed?: boolean;
   emoji?: string;
   isNastya?: boolean;
+  visited?: boolean;
 }
 
 export const placeIcon = (
   city: CityId,
   isDayTrip: boolean,
-  { active = false, dimmed = false, emoji, isNastya = false }: PlaceIconOptions = {},
+  { active = false, emoji, isNastya = false, visited = false }: PlaceIconOptions = {},
 ): L.DivIcon => {
-  const isDimmed = dimmed && !active;
+  const isVisited = visited && !active;
   const fill = active
     ? ACTIVE_COLOR
+    : isVisited
+      ? VISITED_COLOR
     : isNastya
       ? NASTYA_COLOR
       : isDayTrip
@@ -49,15 +53,17 @@ export const placeIcon = (
         : CITY_ACCENT[city].bg;
   const border = active
     ? ACTIVE_BORDER
+    : isVisited
+      ? VISITED_BORDER
     : isNastya
       ? NASTYA_BORDER
       : isDayTrip
         ? DAYTRIP_BORDER
         : CITY_ACCENT[city].border;
-  const size = isDimmed ? 15 : active ? 30 : 22;
+  const size = isVisited ? 15 : active ? 30 : 22;
   return L.divIcon({
     className: 'city-pin-wrapper',
-    html: pinHtml(fill, border, isDimmed, emoji, active),
+    html: pinHtml(fill, border, isVisited, emoji, active),
     iconSize: [size, size],
     iconAnchor: [Math.round(size / 2), size],
     popupAnchor: [0, -size],

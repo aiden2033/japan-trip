@@ -315,9 +315,9 @@ export default function CityMap({
               position={[p.coords!.lat, p.coords!.lng]}
               icon={placeIcon(city, Boolean(p.isDayTrip), {
                 active: isActive,
-                dimmed: visited.has(p),
                 emoji: foodEmojiForPlace(p),
                 isNastya: isNastyaPlace(p),
+                visited: visited.has(p),
               })}
               label={isActive ? `${markerLabel(p)}, текущая точка` : markerLabel(p)}
               keyboard
